@@ -1,32 +1,105 @@
-import { getCachedGlobal } from '@/utilities/getGlobals'
 import Link from 'next/link'
 import React from 'react'
 
-import type { Footer } from '@/payload-types'
-
-import { ThemeSelector } from '@/providers/Theme/ThemeSelector'
-import { CMSLink } from '@/components/Link'
-import { Logo } from '@/components/Logo/Logo'
-
 export async function Footer() {
-  const footerData: Footer = await getCachedGlobal('footer', 1)()
-
-  const navItems = footerData?.navItems || []
+  const currentYear = new Date().getFullYear()
 
   return (
-    <footer className="mt-auto border-t border-border bg-black dark:bg-card text-white">
-      <div className="container py-8 gap-8 flex flex-col md:flex-row md:justify-between">
-        <Link className="flex items-center" href="/">
-          <Logo />
-        </Link>
+    <footer className="mt-auto bg-[#1a5276] text-white">
+      {/* Main Footer Content */}
+      <div className="container py-12 md:py-16">
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-8 md:gap-12">
+          {/* Brand Column */}
+          <div className="md:col-span-1">
+            <Link href="/" className="inline-block mb-4">
+              <span className="font-display text-2xl font-bold text-white">
+                Crete Info
+              </span>
+            </Link>
+            <p className="text-white/70 text-sm leading-relaxed">
+              Your complete guide to discovering the magic of Crete. From pristine beaches to ancient ruins, authentic cuisine to warm hospitality.
+            </p>
+          </div>
 
-        <div className="flex flex-col-reverse items-start md:flex-row gap-4 md:items-center">
-          <ThemeSelector />
-          <nav className="flex flex-col md:flex-row gap-4">
-            {navItems.map(({ link }, i) => {
-              return <CMSLink className="text-white" key={i} {...link} />
-            })}
-          </nav>
+          {/* Services Column */}
+          <div>
+            <h4 className="font-semibold text-[#d4a84b] mb-4 text-sm uppercase tracking-wider">
+              Services
+            </h4>
+            <nav className="flex flex-col gap-2">
+              {[
+                { label: 'Restaurants', href: '/restaurants' },
+                { label: 'Taxi', href: '/taxi' },
+                { label: 'Boats', href: '/boats' },
+                { label: 'Excursions', href: '/excursions' },
+              ].map((link) => (
+                <Link
+                  key={link.href}
+                  href={link.href}
+                  className="text-white/70 hover:text-white text-sm transition-colors"
+                >
+                  {link.label}
+                </Link>
+              ))}
+            </nav>
+          </div>
+
+          {/* More Services Column */}
+          <div>
+            <h4 className="font-semibold text-[#d4a84b] mb-4 text-sm uppercase tracking-wider">
+              More
+            </h4>
+            <nav className="flex flex-col gap-2">
+              {[
+                { label: 'Rent a Car', href: '/rent-a-car' },
+                { label: 'Accommodations', href: '/accommodations' },
+                { label: 'Shops', href: '/shops' },
+                { label: 'Cretan Groups', href: '/cretan-groups' },
+              ].map((link) => (
+                <Link
+                  key={link.href}
+                  href={link.href}
+                  className="text-white/70 hover:text-white text-sm transition-colors"
+                >
+                  {link.label}
+                </Link>
+              ))}
+            </nav>
+          </div>
+
+          {/* Info Column */}
+          <div>
+            <h4 className="font-semibold text-[#d4a84b] mb-4 text-sm uppercase tracking-wider">
+              Information
+            </h4>
+            <nav className="flex flex-col gap-2">
+              {[
+                { label: 'About Crete', href: '/info' },
+                { label: 'Discover Crete', href: '/discover' },
+                { label: 'Contact', href: '/contact' },
+              ].map((link) => (
+                <Link
+                  key={link.href}
+                  href={link.href}
+                  className="text-white/70 hover:text-white text-sm transition-colors"
+                >
+                  {link.label}
+                </Link>
+              ))}
+            </nav>
+          </div>
+        </div>
+      </div>
+
+      {/* Bottom Bar */}
+      <div className="border-t border-white/10">
+        <div className="container py-6 flex flex-col md:flex-row items-center justify-between gap-4">
+          <p className="text-white/50 text-sm">
+            &copy; {currentYear} Crete Info. All rights reserved.
+          </p>
+          <p className="text-white/50 text-sm">
+            Made with love for Crete
+          </p>
         </div>
       </div>
     </footer>

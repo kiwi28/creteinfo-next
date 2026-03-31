@@ -45,6 +45,17 @@
   --breakpoint-2xl: 86rem;
   --font-mono: var(--font-geist-mono);
   --font-sans: var(--font-geist-sans);
+  --font-display: var(--font-playfair);
+  --font-body: var(--font-dm-sans);
+
+  /* Crete Blue & White Theme */
+  --crete-blue: #1a5276;
+  --crete-blue-dark: #154360;
+  --crete-blue-light: #2980b9;
+  --crete-white: #fefefe;
+  --crete-cream: #f8f9fa;
+  --crete-gold: #d4a84b;
+  --crete-sand: #e8dcc4;
 }
 
 @layer utilities {
@@ -211,6 +222,26 @@
   }
   body {
     @apply bg-background text-foreground min-h-[100vh] flex flex-col;
+  }
+
+  /* Font utilities */
+  .font-display {
+    font-family: var(--font-display), var(--font-sans), serif;
+  }
+
+  .font-body {
+    font-family: var(--font-body), var(--font-sans), sans-serif;
+  }
+
+  /* Smooth scrolling */
+  html {
+    scroll-behavior: smooth;
+  }
+
+  /* Selection styling */
+  ::selection {
+    background-color: #1a5276;
+    color: white;
   }
 }
 
