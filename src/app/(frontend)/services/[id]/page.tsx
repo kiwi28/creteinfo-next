@@ -3,61 +3,28 @@ import { notFound } from 'next/navigation'
 import Link from 'next/link'
 import Image from 'next/image'
 import React from 'react'
-import { ArrowLeft, MapPin, Phone, Mail, Globe, Star, MessageCircle } from 'lucide-react'
-import { getServices } from '@/lib/services'
-
-interface Service {
-  id: string
-  name: string
-  slug: string
-  category: string
-  location?: string
-  contact?: string
-  phone?: string
-  email?: string
-  website?: string
-  airbnb?: string
-  description?: string
-  images?: Array<{
-    image?: {
-      url?: string
-    }
-  }>
-  meta?: {
-    title?: string
-    description?: string
-  }
-}
-
-// Category display names
-const categoryLabels: Record<string, string> = {
-  restaurants: 'Restaurants',
-  taxi: 'Taxi',
-  boats: 'Boats',
-  excursions: 'Excursions',
-  'rent-a-car': 'Rent a Car',
-  accommodations: 'Accommodations',
-  shops: 'Shops',
-  'cretan-groups': 'Cretan Groups',
-}
+import { ArrowLeft, MapPin, Phone, Mail, Globe, MessageCircle } from 'lucide-react'
+import { getServiceById, getServices } from '@/lib/services'
+import { getServiceCoverUrl, getServiceDetailUrls } from '@/lib/utils'
+import type { Service } from '@/types/service'
+import { categoryLabels } from '@/types/service'
 
 interface ServicePageProps {
   params: Promise<{
-    slug: string
+    id: string
   }>
 }
 
 export async function generateStaticParams() {
   const services = await getServices({})
   return services.map((service) => ({
-    slug: service.slug,
+    id: service.id,
   }))
 }
 
 export async function generateMetadata({ params }: ServicePageProps): Promise<Metadata> {
-  const { slug } = await params
-  const services = await getServices({})
-  const service = services.find(s => s.slug === slug)
+  const { id } = await params
+  const service = await getServiceById(id)
 
   if (!service) {
     return {
@@ -66,23 +33,31 @@ export async function generateMetadata({ params }: ServicePageProps): Promise<Me
     }
   }
 
+  const categoryLabel = categoryLabels[service.category?.[0]] || service.category?.[0] || 'Service'
+
   return {
-    title: `${service.meta?.title || service.name} - Crete Info`,
-    description: service.meta?.description || service.description || `Discover ${service.name} in Crete.`,
+    title: `${service.name} - Crete Info`,
+    description: service.description || `Discover ${service.name} in Crete.`,
+    openGraph: {
+      title: service.name,
+      description: service.description || `Discover ${service.name} in Crete.`,
+      images: getServiceCoverUrl(service) ? [getServiceCoverUrl(service)!] : [],
+    },
   }
 }
 
 export default async function ServicePage({ params }: ServicePageProps) {
-  const { slug } = await params
-  const services = await getServices({})
-  const service = services.find(s => s.slug === slug)
+  const { id } = await params
+  const service = await getServiceById(id)
 
   if (!service) {
     notFound()
     return null
   }
 
-  const categoryLabel = categoryLabels[service.category] || service.category
+  const categoryLabel = categoryLabels[service.category?.[0]] || service.category?.[0] || 'Service'
+  const coverImageUrl = getServiceCoverUrl(service)
+  const detailImageUrls = getServiceDetailUrls(service)
 
   return (
     <main className="min-h-screen bg-white pt-32 pb-16">
@@ -97,7 +72,7 @@ export default async function ServicePage({ params }: ServicePageProps) {
           </Link>
           <span className="mx-2 text-[#1a5276]/40">/</span>
           <Link
-            href={`/?category=${service.category}`}
+            href={`/?category=${service.category?.[0]}`}
             className="text-sm text-[#1a5276]/60 hover:text-[#1a5276] transition-colors"
           >
             {categoryLabel}
@@ -105,6 +80,19 @@ export default async function ServicePage({ params }: ServicePageProps) {
           <span className="mx-2 text-[#1a5276]/40">/</span>
           <span className="text-sm font-medium text-[#1a5276]">{service.name}</span>
         </nav>
+
+        {/* Cover Image */}
+        {coverImageUrl && (
+          <div className="relative w-full h-[300px] md:h-[400px] rounded-xl overflow-hidden mb-8">
+            <Image
+              src={coverImageUrl}
+              alt={service.name}
+              fill
+              className="object-cover"
+              priority
+            />
+          </div>
+        )}
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           {/* Left Column - Details */}
@@ -121,7 +109,7 @@ export default async function ServicePage({ params }: ServicePageProps) {
                 {service.location && (
                   <span className="flex items-center gap-1 text-xs text-[#1a5276]/60">
                     <MapPin className="w-3 h-3" />
-                    {service.location.charAt(0).toUpperCase() + service.location.slice(1).replace(/-/g, ' ')}
+                    {service.location}
                   </span>
                 )}
               </div>
@@ -130,7 +118,7 @@ export default async function ServicePage({ params }: ServicePageProps) {
             {/* Description */}
             {service.description && (
               <div className="bg-[#f8f9fa] rounded-xl p-6">
-                <p className="text-[#1a5276]/80 leading-relaxed">
+                <p className="text-[#1a5276]/80 leading-relaxed whitespace-pre-line">
                   {service.description}
                 </p>
               </div>
@@ -181,7 +169,7 @@ export default async function ServicePage({ params }: ServicePageProps) {
                 {service.airbnb && (
                   <div className="flex items-center gap-3">
                     <svg className="w-5 h-5 text-[#1a5276]/60" viewBox="0 0 24 24" fill="currentColor">
-                      <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8z" />
+                      <path d="M12.001 18.5c-1.64-2.326-3.2-4.124-3.2-5.9 0-1.768 1.433-3.2 3.2-3.2 1.768 0 3.2 1.432 3.2 3.2 0 1.776-1.56 3.574-3.2 5.9zm0-13.5c-4.478 0-8.5 3.624-8.5 7.6 0 3.316 2.542 6.383 4.96 8.883a29.46 29.46 0 003.54 3.117 29.46 29.46 0 003.54-3.117c2.418-2.5 4.96-5.567 4.96-8.883 0-3.976-4.022-7.6-8.5-7.6z" />
                     </svg>
                     <a
                       href={service.airbnb.startsWith('http') ? service.airbnb : `https://${service.airbnb}`}
@@ -202,25 +190,19 @@ export default async function ServicePage({ params }: ServicePageProps) {
             <h2 className="font-display text-xl font-semibold text-[#1a5276] mb-4">
               Gallery
             </h2>
-            {service.images && service.images.length > 0 ? (
+            {detailImageUrls.length > 0 ? (
               <div className="grid grid-cols-2 gap-2">
-                {service.images.map((img, index) => (
+                {detailImageUrls.map((url, index) => (
                   <div
                     key={index}
                     className="relative aspect-square rounded-lg overflow-hidden bg-[#f8f9fa]"
                   >
-                    {img.image?.url ? (
-                      <Image
-                        src={img.image.url}
-                        alt={`${service.name} - Image ${index + 1}`}
-                        fill
-                        className="object-cover"
-                      />
-                    ) : (
-                      <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-[#1a5276]/20 to-[#2980b9]/20">
-                        <span className="text-[#1a5276]/40 text-sm">No image</span>
-                      </div>
-                    )}
+                    <Image
+                      src={url}
+                      alt={`${service.name} - Image ${index + 1}`}
+                      fill
+                      className="object-cover"
+                    />
                   </div>
                 ))}
               </div>
