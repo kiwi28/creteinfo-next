@@ -4,7 +4,7 @@ import Link from 'next/link'
 import Image from 'next/image'
 import React from 'react'
 import { ArrowLeft, MapPin, Phone, Mail, Globe, Star, MessageCircle } from 'lucide-react'
-import { getServices } from '@/utilities/getServices'
+import { getServices } from '@/lib/services'
 
 interface Service {
   id: string

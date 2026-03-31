@@ -3,7 +3,7 @@ import Link from 'next/link'
 import Image from 'next/image'
 import React from 'react'
 import { ArrowRight, MapPin, Star } from 'lucide-react'
-import { getServices } from '@/utilities/getServices'
+import { getServices } from '@/lib/services'
 
 export const metadata: Metadata = {
   title: 'Crete Info - Your Gateway to the Island of Crete',
