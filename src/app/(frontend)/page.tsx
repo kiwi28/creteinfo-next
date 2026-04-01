@@ -4,29 +4,13 @@ import Image from 'next/image'
 import React from 'react'
 import { ArrowRight, MapPin, Star } from 'lucide-react'
 import { getServices } from '@/lib/services'
+import { getServiceCoverUrl } from '@/lib/utils'
+import type { Service } from '@/types/service'
+import { categoryLabels } from '@/types/service'
 
 export const metadata: Metadata = {
   title: 'Crete Info - Your Gateway to the Island of Crete',
   description: 'Discover the best restaurants, taxis, boat tours, accommodations, and services in Crete. Your complete guide to exploring this beautiful Greek island.',
-}
-
-interface Service {
-  id: string
-  name: string
-  slug: string
-  category: string
-  location?: string
-  description?: string
-  featuredExplore?: boolean
-  images?: Array<{
-    image?: {
-      url?: string
-      }
-  }>
-  meta?: {
-    title?: string
-    description?: string
-  }
 }
 
 interface HomePageProps {
@@ -35,18 +19,6 @@ interface HomePageProps {
     category?: string
     location?: string
   }
-}
-
-// Category display names
-const categoryLabels: Record<string, string> = {
-  restaurants: 'Restaurants',
-  taxi: 'Taxi',
-  boats: 'Boats',
-  excursions: 'Excursions',
-  'rent-a-car': 'Rent a Car',
-  accommodations: 'Accommodations',
-  shops: 'Shops',
-  'cretan-groups': 'Cretan Groups',
 }
 
 export default async function HomePage({ searchParams }: HomePageProps) {
@@ -224,12 +196,13 @@ export default async function HomePage({ searchParams }: HomePageProps) {
 
 // Service Card Component
 function ServiceCard({ service, featured = false }: { service: Service; featured?: boolean }) {
-  const imageUrl = service.images?.[0]?.image?.url || '/images/placeholder-service.jpg'
-  const categoryLabel = categoryLabels[service.category] || service.category
+  const imageUrl = getServiceCoverUrl(service) || '/images/placeholder-service.jpg'
+  const categoryKey = service.category?.[0] || ''
+  const categoryLabel = categoryLabels[categoryKey] || categoryKey
 
   return (
     <Link
-      href={`/services/${service.slug}`}
+      href={`/services/${service.id}`}
       className="group bg-white rounded-xl overflow-hidden shadow-sm hover:shadow-lg transition-all duration-300 hover:-translate-y-1"
     >
       {/* Image */}
@@ -261,7 +234,7 @@ function ServiceCard({ service, featured = false }: { service: Service; featured
               <span>•</span>
               <span className="flex items-center gap-1">
                 <MapPin className="w-3 h-3" />
-                {service.location.charAt(0).toUpperCase() + service.location.slice(1).replace(/-/g, ' ')}
+                {service.location}
               </span>
             </>
           )}
