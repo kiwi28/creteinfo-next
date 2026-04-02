@@ -33,7 +33,7 @@ export async function generateMetadata({ params }: ServicePageProps): Promise<Me
     }
   }
 
-  const categoryLabel = categoryLabels[service.category?.[0]] || service.category?.[0] || 'Service'
+  // const categoryLabel = categoryLabels[service.category?.[0]] || service.category?.[0] || 'Service'
 
   return {
     title: `${service.name} - Crete Info`,
@@ -49,6 +49,8 @@ export async function generateMetadata({ params }: ServicePageProps): Promise<Me
 export default async function ServicePage({ params }: ServicePageProps) {
   const { id } = await params
   const service = await getServiceById(id)
+
+  console.log('----> service page:', id, service)
 
   if (!service) {
     notFound()
@@ -84,13 +86,7 @@ export default async function ServicePage({ params }: ServicePageProps) {
         {/* Cover Image */}
         {coverImageUrl && (
           <div className="relative w-full h-[300px] md:h-[400px] rounded-xl overflow-hidden mb-8">
-            <Image
-              src={coverImageUrl}
-              alt={service.name}
-              fill
-              className="object-cover"
-              priority
-            />
+            <Image src={coverImageUrl} alt={service.name} fill className="object-cover" priority />
           </div>
         )}
 
@@ -140,7 +136,10 @@ export default async function ServicePage({ params }: ServicePageProps) {
                 {service.phone && (
                   <div className="flex items-center gap-3">
                     <Phone className="w-5 h-5 text-[#1a5276]/60" />
-                    <a href={`tel:${service.phone}`} className="text-[#1a5276] hover:text-[#2980b9] transition-colors">
+                    <a
+                      href={`tel:${service.phone}`}
+                      className="text-[#1a5276] hover:text-[#2980b9] transition-colors"
+                    >
                       {service.phone}
                     </a>
                   </div>
@@ -148,7 +147,10 @@ export default async function ServicePage({ params }: ServicePageProps) {
                 {service.email && (
                   <div className="flex items-center gap-3">
                     <Mail className="w-5 h-5 text-[#1a5276]/60" />
-                    <a href={`mailto:${service.email}`} className="text-[#1a5276] hover:text-[#2980b9] transition-colors">
+                    <a
+                      href={`mailto:${service.email}`}
+                      className="text-[#1a5276] hover:text-[#2980b9] transition-colors"
+                    >
                       {service.email}
                     </a>
                   </div>
@@ -157,7 +159,11 @@ export default async function ServicePage({ params }: ServicePageProps) {
                   <div className="flex items-center gap-3">
                     <Globe className="w-5 h-5 text-[#1a5276]/60" />
                     <a
-                      href={service.website.startsWith('http') ? service.website : `https://${service.website}`}
+                      href={
+                        service.website.startsWith('http')
+                          ? service.website
+                          : `https://${service.website}`
+                      }
                       target="_blank"
                       rel="noopener noreferrer"
                       className="text-[#1a5276] hover:text-[#2980b9] transition-colors"
@@ -168,11 +174,19 @@ export default async function ServicePage({ params }: ServicePageProps) {
                 )}
                 {service.airbnb && (
                   <div className="flex items-center gap-3">
-                    <svg className="w-5 h-5 text-[#1a5276]/60" viewBox="0 0 24 24" fill="currentColor">
+                    <svg
+                      className="w-5 h-5 text-[#1a5276]/60"
+                      viewBox="0 0 24 24"
+                      fill="currentColor"
+                    >
                       <path d="M12.001 18.5c-1.64-2.326-3.2-4.124-3.2-5.9 0-1.768 1.433-3.2 3.2-3.2 1.768 0 3.2 1.432 3.2 3.2 0 1.776-1.56 3.574-3.2 5.9zm0-13.5c-4.478 0-8.5 3.624-8.5 7.6 0 3.316 2.542 6.383 4.96 8.883a29.46 29.46 0 003.54 3.117 29.46 29.46 0 003.54-3.117c2.418-2.5 4.96-5.567 4.96-8.883 0-3.976-4.022-7.6-8.5-7.6z" />
                     </svg>
                     <a
-                      href={service.airbnb.startsWith('http') ? service.airbnb : `https://${service.airbnb}`}
+                      href={
+                        service.airbnb.startsWith('http')
+                          ? service.airbnb
+                          : `https://${service.airbnb}`
+                      }
                       target="_blank"
                       rel="noopener noreferrer"
                       className="text-[#1a5276] hover:text-[#2980b9] transition-colors"
@@ -187,9 +201,7 @@ export default async function ServicePage({ params }: ServicePageProps) {
 
           {/* Right Column - Gallery */}
           <div className="lg:col-span-1">
-            <h2 className="font-display text-xl font-semibold text-[#1a5276] mb-4">
-              Gallery
-            </h2>
+            <h2 className="font-display text-xl font-semibold text-[#1a5276] mb-4">Gallery</h2>
             {detailImageUrls.length > 0 ? (
               <div className="grid grid-cols-2 gap-2">
                 {detailImageUrls.map((url, index) => (

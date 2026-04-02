@@ -4,6 +4,7 @@ import React, { useState, useEffect, useCallback, useRef } from 'react'
 import Link from 'next/link'
 import { usePathname, useRouter, useSearchParams } from 'next/navigation'
 import { Menu, X, ChevronDown, Search, MapPin } from 'lucide-react'
+import { locationsMap } from '@/types/service'
 
 // Service type options
 const serviceTypes = [
@@ -18,16 +19,16 @@ const serviceTypes = [
 ]
 
 // Location options
-const locations = [
-  { label: 'Heraklion', value: 'heraklion' },
-  { label: 'Chania', value: 'chania' },
-  { label: 'Rethymno', value: 'rethymno' },
-  { label: 'Agios Nikolaos', value: 'agios-nikolaos' },
-  { label: 'Elounda', value: 'elounda' },
-  { label: 'Agia Pelagia', value: 'agia-pelagia' },
-  { label: 'Malia', value: 'malia' },
-  { label: 'Hersonissos', value: 'hersonissos' },
-]
+// const locations = [
+//   { label: 'Heraklion', value: 'heraklion' },
+//   { label: 'Chania', value: 'chania' },
+//   { label: 'Rethymno', value: 'rethymno' },
+//   { label: 'Agios Nikolaos', value: 'agios-nikolaos' },
+//   { label: 'Elounda', value: 'elounda' },
+//   { label: 'Agia Pelagia', value: 'agia-pelagia' },
+//   { label: 'Malia', value: 'malia' },
+//   { label: 'Hersonissos', value: 'hersonissos' },
+// ]
 
 // Debounce hook
 function useDebounce<T>(value: T, delay: number): T {
@@ -61,33 +62,38 @@ export function HeaderClient() {
 
   // Read URL params on mount
   useEffect(() => {
-    const q = searchParams.get('q')
+    const q = searchParams.get('q') ?? ''
     const category = searchParams.get('category')
     const location = searchParams.get('location')
 
-    if (q) setSearchQuery(q)
-    if (category) setSelectedCategory(category)
-    if (location) setSelectedLocation(location)
+    setSearchQuery(q)
+    setSelectedCategory(category)
+    setSelectedLocation(location)
   }, [searchParams])
 
   // Update URL when filters change
   useEffect(() => {
-    if (debouncedSearch !== searchParams.get('q') ||
-        selectedCategory !== searchParams.get('category') ||
-        selectedLocation !== searchParams.get('location')) {
+    const qParam = searchParams.get('q') ?? ''
+    const categoryParam = searchParams.get('category')
+    const locationParam = searchParams.get('location')
 
-      const params = new URLSearchParams()
-      if (debouncedSearch) params.set('q', debouncedSearch)
-      if (selectedCategory) params.set('category', selectedCategory)
-      if (selectedLocation) params.set('location', selectedLocation)
-
-      const newUrl = params.toString() ? `/?${params.toString()}` : '/'
-
-      // Only update if we have active filters
-      if (debouncedSearch || selectedCategory || selectedLocation) {
-        router.replace(newUrl, { scroll: false })
-      }
+    // If URL already matches state, do nothing
+    if (
+      debouncedSearch === qParam &&
+      selectedCategory === categoryParam &&
+      selectedLocation === locationParam
+    ) {
+      return
     }
+
+    const params = new URLSearchParams()
+
+    if (debouncedSearch) params.set('q', debouncedSearch)
+    if (selectedCategory) params.set('category', selectedCategory)
+    if (selectedLocation) params.set('location', selectedLocation)
+
+    const newUrl = params.toString() ? `/?${params.toString()}` : '/'
+    router.replace(newUrl, { scroll: false })
   }, [debouncedSearch, selectedCategory, selectedLocation, router, searchParams])
 
   // Scroll handler
@@ -105,7 +111,9 @@ export function HeaderClient() {
   // Prevent body scroll when menu is open
   useEffect(() => {
     document.body.style.overflow = isMenuOpen ? 'hidden' : ''
-    return () => { document.body.style.overflow = '' }
+    return () => {
+      document.body.style.overflow = ''
+    }
   }, [isMenuOpen])
 
   // Clear all filters
@@ -155,8 +163,12 @@ export function HeaderClient() {
             aria-label={isMenuOpen ? 'Close menu' : 'Open menu'}
           >
             <div className="w-6 h-6 relative">
-              <Menu className={`absolute inset-0 w-6 h-6 text-[#1a5276] transition-all duration-300 ${isMenuOpen ? 'opacity-0 rotate-90 scale-75' : 'opacity-100 rotate-0 scale-100'}`} />
-              <X className={`absolute inset-0 w-6 h-6 text-[#1a5276] transition-all duration-300 ${isMenuOpen ? 'opacity-100 rotate-0 scale-100' : 'opacity-0 -rotate-90 scale-75'}`} />
+              <Menu
+                className={`absolute inset-0 w-6 h-6 text-[#1a5276] transition-all duration-300 ${isMenuOpen ? 'opacity-0 rotate-90 scale-75' : 'opacity-100 rotate-0 scale-100'}`}
+              />
+              <X
+                className={`absolute inset-0 w-6 h-6 text-[#1a5276] transition-all duration-300 ${isMenuOpen ? 'opacity-100 rotate-0 scale-100' : 'opacity-0 -rotate-90 scale-75'}`}
+              />
             </div>
           </button>
         </div>
@@ -187,12 +199,16 @@ export function HeaderClient() {
 
         {/* Service Type Buttons */}
         <div className="mb-3">
-          <p className="text-xs font-semibold text-[#1a5276]/60 uppercase tracking-wider mb-2">Service Type</p>
+          <p className="text-xs font-semibold text-[#1a5276]/60 uppercase tracking-wider mb-2">
+            Service Type
+          </p>
           <div className="flex flex-wrap gap-2">
             {serviceTypes.map((type) => (
               <button
                 key={type.value}
-                onClick={() => setSelectedCategory(selectedCategory === type.value ? null : type.value)}
+                onClick={() =>
+                  setSelectedCategory(selectedCategory === type.value ? null : type.value)
+                }
                 className={`px-3 py-1.5 rounded-full text-sm font-medium transition-all ${
                   selectedCategory === type.value
                     ? 'bg-[#1a5276] text-white'
@@ -212,19 +228,22 @@ export function HeaderClient() {
             Location
           </p>
           <div className="flex flex-wrap gap-2">
-            {locations.map((loc) => (
-              <button
-                key={loc.value}
-                onClick={() => setSelectedLocation(selectedLocation === loc.value ? null : loc.value)}
-                className={`px-3 py-1.5 rounded-full text-sm font-medium transition-all ${
-                  selectedLocation === loc.value
-                    ? 'bg-[#d4a84b] text-white'
-                    : 'bg-[#d4a84b]/10 text-[#d4a84b] hover:bg-[#d4a84b]/20'
-                }`}
-              >
-                {loc.label}
-              </button>
-            ))}
+            {Object.entries(locationsMap).map((entry) => {
+              const [value, label] = entry
+              return (
+                <button
+                  key={value}
+                  onClick={() => setSelectedLocation(selectedLocation === value ? null : value)}
+                  className={`px-3 py-1.5 rounded-full text-sm font-medium transition-all ${
+                    selectedLocation === value
+                      ? 'bg-[#d4a84b] text-white'
+                      : 'bg-[#d4a84b]/10 text-[#d4a84b] hover:bg-[#d4a84b]/20'
+                  }`}
+                >
+                  {label}
+                </button>
+              )
+            })}
           </div>
         </div>
 
@@ -257,7 +276,10 @@ export function HeaderClient() {
           <div className="p-6 border-b border-[#1a5276]/10">
             <div className="flex items-center justify-between">
               <span className="font-display text-[#1a5276] text-xl font-semibold">Menu</span>
-              <button onClick={() => setIsMenuOpen(false)} className="p-2 rounded-lg hover:bg-[#1a5276]/5">
+              <button
+                onClick={() => setIsMenuOpen(false)}
+                className="p-2 rounded-lg hover:bg-[#1a5276]/5"
+              >
                 <X className="w-5 h-5 text-[#1a5276]" />
               </button>
             </div>

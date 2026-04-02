@@ -35,13 +35,18 @@ export const categoryLabels: Record<string, string> = {
   'cretan-groups': 'Cretan Groups',
 }
 
-export const locations = [
-  { label: 'Heraklion', value: 'heraklion' },
-  { label: 'Chania', value: 'chania' },
-  { label: 'Rethymno', value: 'rethymno' },
-  { label: 'Agios Nikolaos', value: 'agios-nikolaos' },
-  { label: 'Elounda', value: 'elounda' },
-  { label: 'Agia Pelagia', value: 'agia-pelagia' },
-  { label: 'Malia', value: 'malia' },
-  { label: 'Hersonissos', value: 'hersonissos' },
-]
+export const locationsMap = {
+  heraklion: 'Heraklion',
+  chania: 'Chania',
+  rethymno: 'Rethymno',
+  'agios-nikolaos': 'Agios Nikolaos',
+  elounda: 'Elounda',
+  'agia-pelagia': 'Agia Pelagia',
+  malia: 'Malia',
+  hersonissos: 'Hersonissos',
+  sougia: 'Sougia',
+  kissamos: 'Kissamos',
+  crete: 'Crete',
+  'south-crete': 'South Crete',
+  balos: 'Balos',
+}

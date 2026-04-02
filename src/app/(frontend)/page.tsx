@@ -6,11 +6,12 @@ import { ArrowRight, MapPin, Star } from 'lucide-react'
 import { getServices } from '@/lib/services'
 import { getServiceCoverUrl } from '@/lib/utils'
 import type { Service } from '@/types/service'
-import { categoryLabels } from '@/types/service'
+import { categoryLabels, locationsMap } from '@/types/service'
 
 export const metadata: Metadata = {
   title: 'Crete Info - Your Gateway to the Island of Crete',
-  description: 'Discover the best restaurants, taxis, boat tours, accommodations, and services in Crete. Your complete guide to exploring this beautiful Greek island.',
+  description:
+    'Discover the best restaurants, taxis, boat tours, accommodations, and services in Crete. Your complete guide to exploring this beautiful Greek island.',
 }
 
 interface HomePageProps {
@@ -23,13 +24,16 @@ interface HomePageProps {
 
 export default async function HomePage({ searchParams }: HomePageProps) {
   // Build filter object
+  const params = await searchParams
   const filter: { q?: string; category?: string; location?: string } = {}
-  if (searchParams.q) filter.q = searchParams.q
-  if (searchParams.category) filter.category = searchParams.category
-  if (searchParams.location) filter.location = searchParams.location
+  if (params.q) filter.q = params.q
+  if (params.category) filter.category = params.category
+  if (params.location) filter.location = params.location
+
+  console.log('-----------------------> homepage filter:', filter)
 
   // Check if any filters are active
-  const hasActiveFilters = Boolean(searchParams.q || searchParams.category || searchParams.location)
+  const hasActiveFilters = Boolean(params.q || params.category || params.location)
 
   // Fetch services based on filters
   let services: Service[] = []
@@ -89,11 +93,13 @@ export default async function HomePage({ searchParams }: HomePageProps) {
                   ? `${services.length} result${services.length !== 1 ? 's' : ''} found`
                   : 'No results found'}
               </h2>
-              {(searchParams.q || searchParams.category || searchParams.location) && (
+              {(params.q || params.category || params.location) && (
                 <p className="text-[#1a5276]/60 mt-1">
-                  {searchParams.q && `Search: "${searchParams.q}"`}
-                  {searchParams.category && `${searchParams.q ? ' • ' : ''}${categoryLabels[searchParams.category] || searchParams.category}`}
-                  {searchParams.location && `${searchParams.q || searchParams.category ? ' • ' : ''}${searchParams.location.charAt(0).toUpperCase() + searchParams.location.slice(1).replace(/-/g, ' ')}`}
+                  {params.q && `Search: "${params.q}"`}
+                  {params.category &&
+                    `${params.q ? ' • ' : ''}${categoryLabels[params.category] || params.category}`}
+                  {params.location &&
+                    `${params.q || params.category ? ' • ' : ''}${params.location.charAt(0).toUpperCase() + params.location.slice(1).replace(/-/g, ' ')}`}
                 </p>
               )}
             </div>
@@ -129,9 +135,7 @@ export default async function HomePage({ searchParams }: HomePageProps) {
               <h2 className="font-display text-2xl md:text-3xl font-bold text-[#1a5276]">
                 Explore Crete
               </h2>
-              <p className="text-[#1a5276]/60 mt-1">
-                Featured services handpicked for you
-              </p>
+              <p className="text-[#1a5276]/60 mt-1">Featured services handpicked for you</p>
             </div>
             <Link
               href="/discover"
@@ -151,9 +155,7 @@ export default async function HomePage({ searchParams }: HomePageProps) {
             </div>
           ) : (
             <div className="text-center py-12 bg-white rounded-2xl">
-              <p className="text-[#1a5276]/60">
-                Featured services coming soon...
-              </p>
+              <p className="text-[#1a5276]/60">Featured services coming soon...</p>
             </div>
           )}
 
@@ -177,9 +179,9 @@ export default async function HomePage({ searchParams }: HomePageProps) {
             About Crete
           </h2>
           <p className="text-[#1a5276]/70 leading-relaxed mb-6">
-            Crete is the largest and most populous of the Greek islands, known for its stunning beaches,
-            ancient Minoan ruins, and vibrant culture. From the Palace of Knossos to the beaches of Elafonisi,
-            Crete offers something for every traveler.
+            Crete is the largest and most populous of the Greek islands, known for its stunning
+            beaches, ancient Minoan ruins, and vibrant culture. From the Palace of Knossos to the
+            beaches of Elafonisi, Crete offers something for every traveler.
           </p>
           <Link
             href="/info"
@@ -234,15 +236,14 @@ function ServiceCard({ service, featured = false }: { service: Service; featured
               <span>•</span>
               <span className="flex items-center gap-1">
                 <MapPin className="w-3 h-3" />
-                {service.location}
+                {console.log('---------> service- location', service.location)}
+                {locationsMap[service.location as keyof typeof locationsMap] || ''}
               </span>
             </>
           )}
         </div>
         {service.description && (
-          <p className="text-xs text-[#1a5276]/50 mt-2 line-clamp-2">
-            {service.description}
-          </p>
+          <p className="text-xs text-[#1a5276]/50 mt-2 line-clamp-2">{service.description}</p>
         )}
       </div>
     </Link>
