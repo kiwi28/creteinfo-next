@@ -52,79 +52,81 @@ export default async function HomePage({ searchParams }: HomePageProps) {
   return (
     <main className="min-h-screen bg-white">
       {/* Hero Section - Only show when no filters are active */}
-      {!hasActiveFilters && (
-        <section className="relative h-[60vh] md:h-[70vh] overflow-hidden">
-          {/* Background Image */}
-          <div className="absolute inset-0">
-            <div className="absolute inset-0 bg-gradient-to-b from-[#1a5276]/60 via-[#1a5276]/40 to-white" />
-            <div className="w-full h-full bg-gradient-to-br from-[#2980b9] to-[#1a5276]" />
-          </div>
-
-          {/* Content */}
-          <div className="relative z-10 h-full flex flex-col items-center justify-center text-center text-white px-4">
-            <div className="mb-6">
-              <div className="w-16 h-1 bg-[#d4a84b] rounded-full mx-auto" />
+      <div className="mt-72 md:mt-64">
+        {!hasActiveFilters && (
+          <section className="relative h-[60vh] md:h-[70vh] overflow-hidden">
+            {/* Background Image */}
+            <div className="absolute inset-0">
+              <div className="absolute inset-0 bg-gradient-to-b from-[#1a5276]/60 via-[#1a5276]/40 to-white" />
+              <div className="w-full h-full bg-gradient-to-br from-[#2980b9] to-[#1a5276]" />
             </div>
-            <h1 className="font-display text-4xl md:text-6xl font-bold mb-4 tracking-tight">
-              Welcome to <span className="text-[#d4a84b]">Crete</span>
-            </h1>
-            <p className="text-lg md:text-xl text-white/80 max-w-xl mb-8">
-              Discover pristine beaches, ancient ruins, and authentic Cretan hospitality
-            </p>
-            <Link
-              href="/discover"
-              className="inline-flex items-center gap-2 bg-white text-[#1a5276] px-6 py-3 rounded-full font-semibold hover:bg-[#d4a84b] hover:text-white transition-all duration-300 shadow-lg"
-            >
-              Discover Crete
-              <ArrowRight className="w-4 h-4" />
-            </Link>
-          </div>
-        </section>
-      )}
 
-      {/* Search Results Section - Only show when filters are active */}
-      {hasActiveFilters && (
-        <section className="pt-48 md:pt-44 pb-8 px-4 md:px-8">
-          <div className="max-w-7xl mx-auto">
-            {/* Results Header */}
-            <div className="mb-6">
-              <h2 className="font-display text-2xl md:text-3xl font-bold text-[#1a5276]">
-                {services.length > 0
-                  ? `${services.length} result${services.length !== 1 ? 's' : ''} found`
-                  : 'No results found'}
-              </h2>
-              {(params.q || params.category || params.location) && (
-                <p className="text-[#1a5276]/60 mt-1">
-                  {params.q && `Search: "${params.q}"`}
-                  {params.category &&
-                    `${params.q ? ' • ' : ''}${categoryLabels[params.category] || params.category}`}
-                  {params.location &&
-                    `${params.q || params.category ? ' • ' : ''}${params.location.charAt(0).toUpperCase() + params.location.slice(1).replace(/-/g, ' ')}`}
-                </p>
+            {/* Content */}
+            <div className="relative z-10 h-full flex flex-col items-center justify-center text-center text-white px-4">
+              <div className="mb-6">
+                <div className="w-16 h-1 bg-[#d4a84b] rounded-full mx-auto" />
+              </div>
+              <h1 className="font-display text-4xl md:text-6xl font-bold mb-4 tracking-tight">
+                Welcome to <span className="text-[#d4a84b]">Crete</span>
+              </h1>
+              <p className="text-lg md:text-xl text-white/80 max-w-xl mb-8">
+                Discover pristine beaches, ancient ruins, and authentic Cretan hospitality
+              </p>
+              <Link
+                href="/discover"
+                className="inline-flex items-center gap-2 bg-white text-[#1a5276] px-6 py-3 rounded-full font-semibold hover:bg-[#d4a84b] hover:text-white transition-all duration-300 shadow-lg"
+              >
+                Discover Crete
+                <ArrowRight className="w-4 h-4" />
+              </Link>
+            </div>
+          </section>
+        )}
+
+        {/* Search Results Section - Only show when filters are active */}
+        {hasActiveFilters && (
+          <section className="pt-48 md:pt-44 pb-8 px-4 md:px-8">
+            <div className="max-w-7xl mx-auto">
+              {/* Results Header */}
+              <div className="mb-6">
+                <h2 className="font-display text-2xl md:text-3xl font-bold text-[#1a5276]">
+                  {services.length > 0
+                    ? `${services.length} result${services.length !== 1 ? 's' : ''} found`
+                    : 'No results found'}
+                </h2>
+                {(params.q || params.category || params.location) && (
+                  <p className="text-[#1a5276]/60 mt-1">
+                    {params.q && `Search: "${params.q}"`}
+                    {params.category &&
+                      `${params.q ? ' • ' : ''}${categoryLabels[params.category] || params.category}`}
+                    {params.location &&
+                      `${params.q || params.category ? ' • ' : ''}${params.location.charAt(0).toUpperCase() + params.location.slice(1).replace(/-/g, ' ')}`}
+                  </p>
+                )}
+              </div>
+
+              {/* Results Grid */}
+              {services.length > 0 ? (
+                <div className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6">
+                  {services.map((service) => (
+                    <ServiceCard key={service.id} service={service} />
+                  ))}
+                </div>
+              ) : (
+                <div className="text-center py-12">
+                  <p className="text-[#1a5276]/60 mb-4">No services match your search criteria.</p>
+                  <Link
+                    href="/"
+                    className="text-[#1a5276] font-medium hover:text-[#d4a84b] underline"
+                  >
+                    Clear filters and start over
+                  </Link>
+                </div>
               )}
             </div>
-
-            {/* Results Grid */}
-            {services.length > 0 ? (
-              <div className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6">
-                {services.map((service) => (
-                  <ServiceCard key={service.id} service={service} />
-                ))}
-              </div>
-            ) : (
-              <div className="text-center py-12">
-                <p className="text-[#1a5276]/60 mb-4">No services match your search criteria.</p>
-                <Link
-                  href="/"
-                  className="text-[#1a5276] font-medium hover:text-[#d4a84b] underline"
-                >
-                  Clear filters and start over
-                </Link>
-              </div>
-            )}
-          </div>
-        </section>
-      )}
+          </section>
+        )}
+      </div>
 
       {/* Explore Crete Section - Always show */}
       <section className="py-12 md:py-16 px-4 md:px-8 bg-[#f8f9fa]">
