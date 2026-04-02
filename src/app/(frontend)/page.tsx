@@ -238,7 +238,6 @@ function ServiceCard({ service, featured = false }: { service: Service; featured
               <span>•</span>
               <span className="flex items-center gap-1">
                 <MapPin className="w-3 h-3" />
-                {console.log('---------> service- location', service.location)}
                 {locationsMap[service.location as keyof typeof locationsMap] || ''}
               </span>
             </>

@@ -7,7 +7,7 @@ import { ArrowLeft, MapPin, Phone, Mail, Globe, MessageCircle } from 'lucide-rea
 import { getServiceById, getServices } from '@/lib/services'
 import { getServiceCoverUrl, getServiceDetailUrls } from '@/lib/utils'
 import type { Service } from '@/types/service'
-import { categoryLabels } from '@/types/service'
+import { categoryLabels, locationsMap } from '@/types/service'
 
 interface ServicePageProps {
   params: Promise<{
@@ -62,7 +62,7 @@ export default async function ServicePage({ params }: ServicePageProps) {
   const detailImageUrls = getServiceDetailUrls(service)
 
   return (
-    <main className="min-h-screen bg-white pt-32 pb-16">
+    <main className="min-h-screen bg-white pt-32 pb-16 mt-72 md:mt-64">
       <div className="container mx-auto px-4 md:px-8 max-w-6xl">
         {/* Breadcrumb */}
         <nav className="mb-6">
@@ -105,7 +105,8 @@ export default async function ServicePage({ params }: ServicePageProps) {
                 {service.location && (
                   <span className="flex items-center gap-1 text-xs text-[#1a5276]/60">
                     <MapPin className="w-3 h-3" />
-                    {service.location}
+                    {locationsMap[service.location as keyof typeof locationsMap] ||
+                      service.location}
                   </span>
                 )}
               </div>
