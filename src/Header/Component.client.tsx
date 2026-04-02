@@ -18,18 +18,6 @@ const serviceTypes = [
   { label: 'Cretan Groups', value: 'cretan-groups' },
 ]
 
-// Location options
-// const locations = [
-//   { label: 'Heraklion', value: 'heraklion' },
-//   { label: 'Chania', value: 'chania' },
-//   { label: 'Rethymno', value: 'rethymno' },
-//   { label: 'Agios Nikolaos', value: 'agios-nikolaos' },
-//   { label: 'Elounda', value: 'elounda' },
-//   { label: 'Agia Pelagia', value: 'agia-pelagia' },
-//   { label: 'Malia', value: 'malia' },
-//   { label: 'Hersonissos', value: 'hersonissos' },
-// ]
-
 // Debounce hook
 function useDebounce<T>(value: T, delay: number): T {
   const [debouncedValue, setDebouncedValue] = useState<T>(value)
@@ -57,22 +45,43 @@ export function HeaderClient() {
   const searchParams = useSearchParams()
   const searchInputRef = useRef<HTMLInputElement>(null)
 
+  // Ref to track if we're syncing from URL (prevents circular updates)
+  const isSyncingFromUrl = useRef(false)
+
   // Debounce search query
   const debouncedSearch = useDebounce(searchQuery, 300)
 
-  // Read URL params on mount
+  // Check if we're on the homepage
+  const isHomePage = pathname === '/'
+
+  // Read URL params on mount or when returning to homepage
   useEffect(() => {
+    // Only sync from URL on homepage
+    if (!isHomePage) return
+
     const q = searchParams.get('q') ?? ''
     const category = searchParams.get('category')
     const location = searchParams.get('location')
 
+    // Prevent this URL sync from triggering a URL update
+    isSyncingFromUrl.current = true
     setSearchQuery(q)
     setSelectedCategory(category)
     setSelectedLocation(location)
-  }, [searchParams])
+    // Reset the flag after a microtask
+    queueMicrotask(() => {
+      isSyncingFromUrl.current = false
+    })
+  }, [searchParams, isHomePage])
 
-  // Update URL when filters change
+  // Update URL when filters change (only on homepage)
   useEffect(() => {
+    // Only update URL when on homepage
+    if (!isHomePage) return
+
+    // Don't update URL if we're currently syncing from URL
+    if (isSyncingFromUrl.current) return
+
     const qParam = searchParams.get('q') ?? ''
     const categoryParam = searchParams.get('category')
     const locationParam = searchParams.get('location')
@@ -94,7 +103,7 @@ export function HeaderClient() {
 
     const newUrl = params.toString() ? `/?${params.toString()}` : '/'
     router.replace(newUrl, { scroll: false })
-  }, [debouncedSearch, selectedCategory, selectedLocation, router, searchParams])
+  }, [debouncedSearch, selectedCategory, selectedLocation, router, searchParams, isHomePage])
 
   // Scroll handler
   useEffect(() => {
