@@ -6,6 +6,7 @@ import { getServices } from '@/lib/services'
 import { getServiceCoverUrl } from '@/lib/utils'
 import type { Service } from '@/types/service'
 import { categoryLabels, locationsMap } from '@/types/service'
+import { ResultsWrapper } from '@/components/ResultsWrapper'
 
 export const metadata: Metadata = {
   title: 'Crete Info - Your Gateway to the Island of Crete',
@@ -84,7 +85,7 @@ export default async function HomePage({ searchParams }: HomePageProps) {
 
         {/* Search Results Section - Only show when filters are active */}
         {hasActiveFilters && (
-          <section className="pt-48 md:pt-12 pb-8 px-4 md:px-8">
+          <section className="pt-48 md:pt-0 pb-12 px-4 md:px-8">
             <div className="max-w-7xl mx-auto">
               {/* Results Header */}
               <div className="mb-6">
@@ -106,11 +107,12 @@ export default async function HomePage({ searchParams }: HomePageProps) {
 
               {/* Results Grid */}
               {services.length > 0 ? (
-                <div className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6">
-                  {services.map((service) => (
-                    <ServiceCard key={service.id} service={service} />
-                  ))}
-                </div>
+                // <div className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6">
+                //   {services.map((service) => (
+                //     <ServiceCard key={service.id} service={service} />
+                //   ))}
+                // </div>
+                <ResultsWrapper services={services} />
               ) : (
                 <div className="text-center py-12">
                   <p className="text-[#1a5276]/60 mb-4">No services match your search criteria.</p>
