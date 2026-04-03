@@ -96,7 +96,7 @@ export default async function CategoryPage({ params, searchParams }: PageProps) 
 
   return (
     <main className="min-h-screen bg-white">
-      <div className="mt-72 md:mt-64">
+      <div className="md:mt-16">
         {/* Header */}
         <section className="py-12 md:py-16 px-4 md:px-8 bg-gradient-to-b from-[#f8f9fa] to-white">
           <div className="max-w-7xl mx-auto">

@@ -140,57 +140,78 @@ export function HeaderClient() {
   const hasActiveFilters = debouncedSearch || selectedCategory || selectedLocation
 
   return (
-    <header
-      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 ${
-        isScrolled
-          ? 'bg-white/95 backdrop-blur-md shadow-lg shadow-[#1a5276]/5'
-          : 'bg-white'
-      }`}
-    >
+    <header className="bg-white">
       {/* Main Header Row */}
-      <div className="w-full px-4 md:px-8 py-4">
-        <div className="flex items-center justify-between">
-          {/* Brand - Offset Left */}
-          <Link href="/" className="group flex items-center gap-3 z-10 shrink-0">
-            <div className="relative">
-              <div className="w-10 h-10 md:w-12 md:h-12 rounded-full bg-gradient-to-br from-[#1a5276] to-[#2980b9] flex items-center justify-center shadow-lg group-hover:shadow-xl transition-shadow duration-300">
-                <span className="text-white font-display text-lg md:text-xl font-bold">C</span>
+      {/* <div className="w-full px-4 md:px-8 py-4"> */}
+      <div
+        className={` fixed top-0 left-0 right-0 z-50 transition-all duration-500 ${
+          isScrolled ? 'bg-white/95 backdrop-blur-md shadow-lg shadow-[#1a5276]/5' : 'bg-white'
+        }`}
+      >
+        <div className="max-w-7xl mx-auto py-4">
+          <div className="flex items-center justify-between gap-20">
+            {/* Brand - Offset Left */}
+            <Link href="/" className="group flex items-center gap-3 z-10 shrink-0">
+              <div className="relative">
+                <div className="w-10 h-10 md:w-12 md:h-12 rounded-full bg-gradient-to-br from-[#1a5276] to-[#2980b9] flex items-center justify-center shadow-lg group-hover:shadow-xl transition-shadow duration-300">
+                  <span className="text-white font-display text-lg md:text-xl font-bold">C</span>
+                </div>
+                <div className="absolute -bottom-1 -right-1 w-4 h-4 bg-[#d4a84b] rounded-full opacity-80 group-hover:opacity-100 transition-opacity" />
               </div>
-              <div className="absolute -bottom-1 -right-1 w-4 h-4 bg-[#d4a84b] rounded-full opacity-80 group-hover:opacity-100 transition-opacity" />
-            </div>
-            <div className="flex flex-col">
-              <span className="font-display text-[#1a5276] text-lg md:text-xl font-semibold tracking-tight leading-tight">
-                Welcome to
-              </span>
-              <span className="font-display text-[#1a5276] text-xl md:text-2xl font-bold tracking-tight leading-tight">
-                Crete Info
-              </span>
-            </div>
-          </Link>
+              <div className="flex flex-col">
+                <span className="font-display text-[#1a5276] text-lg md:text-xl font-semibold tracking-tight leading-tight">
+                  Welcome to
+                </span>
+                <span className="font-display text-[#1a5276] text-xl md:text-2xl font-bold tracking-tight leading-tight">
+                  Crete Info
+                </span>
+              </div>
+            </Link>
 
-          {/* Mobile Menu Button */}
-          <button
-            onClick={() => setIsMenuOpen(!isMenuOpen)}
-            className="md:hidden relative z-10 p-2 rounded-lg hover:bg-[#1a5276]/5 transition-colors"
-            aria-label={isMenuOpen ? 'Close menu' : 'Open menu'}
-          >
-            <div className="w-6 h-6 relative">
-              <Search
-                className={`absolute inset-0 w-6 h-6 text-[#1a5276] transition-all duration-300 ${isMenuOpen ? 'opacity-0 rotate-90 scale-75' : 'opacity-100 rotate-0 scale-100'}`}
+            <div className="relative grow-1">
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-[#1a5276]/50" />
+              <input
+                ref={searchInputRef}
+                type="text"
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                placeholder="Search services..."
+                className="w-full pl-10 pr-4 py-3 rounded-xl border border-[#1a5276]/20 focus:border-[#1a5276] focus:ring-2 focus:ring-[#1a5276]/20 outline-none transition-all text-[#1a5276] placeholder:text-[#1a5276]/50"
               />
-              <X
-                className={`absolute inset-0 w-6 h-6 text-[#1a5276] transition-all duration-300 ${isMenuOpen ? 'opacity-100 rotate-0 scale-100' : 'opacity-0 -rotate-90 scale-75'}`}
-              />
+              {searchQuery && (
+                <button
+                  onClick={() => setSearchQuery('')}
+                  className="absolute right-3 top-1/2 -translate-y-1/2 p-1 rounded-full hover:bg-[#1a5276]/10 transition-colors"
+                >
+                  <X className="w-4 h-4 text-[#1a5276]/50" />
+                </button>
+              )}
             </div>
-          </button>
+
+            {/* Mobile Menu Button */}
+            <button
+              onClick={() => setIsMenuOpen(!isMenuOpen)}
+              className="md:hidden relative z-10 p-2 rounded-lg hover:bg-[#1a5276]/5 transition-colors"
+              aria-label={isMenuOpen ? 'Close menu' : 'Open menu'}
+            >
+              <div className="w-6 h-6 relative">
+                <Search
+                  className={`absolute inset-0 w-6 h-6 text-[#1a5276] transition-all duration-300 ${isMenuOpen ? 'opacity-0 rotate-90 scale-75' : 'opacity-100 rotate-0 scale-100'}`}
+                />
+                <X
+                  className={`absolute inset-0 w-6 h-6 text-[#1a5276] transition-all duration-300 ${isMenuOpen ? 'opacity-100 rotate-0 scale-100' : 'opacity-0 -rotate-90 scale-75'}`}
+                />
+              </div>
+            </button>
+          </div>
         </div>
       </div>
 
       {/* Search & Filters Section - Desktop only, Hidden on /services pages */}
       {!isServicesPage && (
-        <div className="hidden md:block w-full px-4 md:px-8 pb-4 border-t border-[#1a5276]/10">
+        <div className="hidden md:block max-w-7xl mx-auto py-4 pt-28 border-t border-[#1a5276]/10">
           {/* Search Input */}
-          <div className="relative mb-4">
+          {/* <div className="relative mb-4">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-[#1a5276]/50" />
             <input
               ref={searchInputRef}
@@ -208,7 +229,7 @@ export function HeaderClient() {
                 <X className="w-4 h-4 text-[#1a5276]/50" />
               </button>
             )}
-          </div>
+          </div> */}
 
           {/* Service Type Buttons */}
           <div className="mb-3">
@@ -289,7 +310,7 @@ export function HeaderClient() {
         <div className="h-full flex flex-col">
           {/* Mobile Search & Filters - Only show if not on services page */}
           {!isServicesPage && (
-            <div className="p-4 border-b border-[#1a5276]/10">
+            <div className="p-4 border-b mt-14 border-[#1a5276]/10">
               {/* Search Input */}
               <div className="relative mb-4">
                 <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-[#1a5276]/50" />
@@ -346,7 +367,9 @@ export function HeaderClient() {
                     return (
                       <button
                         key={value}
-                        onClick={() => setSelectedLocation(selectedLocation === value ? null : value)}
+                        onClick={() =>
+                          setSelectedLocation(selectedLocation === value ? null : value)
+                        }
                         className={`px-3 py-1.5 rounded-full text-sm font-medium transition-all ${
                           selectedLocation === value
                             ? 'bg-[#d4a84b] text-white'
@@ -373,7 +396,7 @@ export function HeaderClient() {
           )}
 
           {/* Navigation Links */}
-          <nav className="flex-1 overflow-y-auto py-4">
+          {/* <nav className="flex-1 overflow-y-auto py-4">
             {serviceTypes.map((type) => (
               <Link
                 key={type.value}
@@ -384,11 +407,11 @@ export function HeaderClient() {
                 {type.label}
               </Link>
             ))}
-          </nav>
+          </nav> */}
           <div className="p-6 border-t border-[#1a5276]/10 bg-gradient-to-b from-[#f8f9fa] to-white">
-            <p className="text-sm text-[#1a5276]/60 text-center font-medium">
-              Discover the beauty of Crete
-            </p>
+            <button className="text-sm text-[#1a5276]/60 text-center font-medium">
+              See results
+            </button>
           </div>
         </div>
       </div>

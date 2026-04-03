@@ -1,7 +1,6 @@
 import type { Metadata } from 'next'
 import Link from 'next/link'
 import Image from 'next/image'
-import React from 'react'
 import { ArrowRight, MapPin, Star } from 'lucide-react'
 import { getServices } from '@/lib/services'
 import { getServiceCoverUrl } from '@/lib/utils'
@@ -52,7 +51,7 @@ export default async function HomePage({ searchParams }: HomePageProps) {
   return (
     <main className="min-h-screen bg-white">
       {/* Hero Section - Only show when no filters are active */}
-      <div className="mt-72 md:mt-64">
+      <div className="md:mt-16">
         {!hasActiveFilters && (
           <section className="relative h-[60vh] md:h-[70vh] overflow-hidden">
             {/* Background Image */}
@@ -85,7 +84,7 @@ export default async function HomePage({ searchParams }: HomePageProps) {
 
         {/* Search Results Section - Only show when filters are active */}
         {hasActiveFilters && (
-          <section className="pt-48 md:pt-44 pb-8 px-4 md:px-8">
+          <section className="pt-48 md:pt-12 pb-8 px-4 md:px-8">
             <div className="max-w-7xl mx-auto">
               {/* Results Header */}
               <div className="mb-6">
