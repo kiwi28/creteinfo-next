@@ -15,6 +15,7 @@ export interface Service {
   detailImages: string[]
   created: string
   updated: string
+  featured: boolean
 }
 
 export interface ServiceFilter {
