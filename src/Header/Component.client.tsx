@@ -175,7 +175,7 @@ export function HeaderClient() {
             aria-label={isMenuOpen ? 'Close menu' : 'Open menu'}
           >
             <div className="w-6 h-6 relative">
-              <Menu
+              <Search
                 className={`absolute inset-0 w-6 h-6 text-[#1a5276] transition-all duration-300 ${isMenuOpen ? 'opacity-0 rotate-90 scale-75' : 'opacity-100 rotate-0 scale-100'}`}
               />
               <X
