@@ -7,7 +7,9 @@ export async function getServices(filter: ServiceFilter = {}): Promise<Service[]
 
   // Add search query filter (searches in name and description)
   if (filter.q) {
-    filterParts.push(`(name ~ "${filter.q}" || description ~ "${filter.q}")`)
+    filterParts.push(
+      `(name ~ "${filter.q}" || description ~ "${filter.q}") || category ~ "${filter.q}") || location ~ "${filter.q}")`,
+    )
   }
 
   // Add category filter
@@ -62,11 +64,7 @@ export async function getFeaturedServices(): Promise<Service[]> {
  * Returns a cached version of getServices
  */
 export const getCachedServices = (filter: ServiceFilter = {}) =>
-  unstable_cache(
-    async () => getServices(filter),
-    ['services', JSON.stringify(filter)],
-    {
-      tags: ['services'],
-      revalidate: 60, // Revalidate every 60 seconds
-    },
-  )
+  unstable_cache(async () => getServices(filter), ['services', JSON.stringify(filter)], {
+    tags: ['services'],
+    revalidate: 60, // Revalidate every 60 seconds
+  })
