@@ -6,10 +6,22 @@ export async function getServices(filter: ServiceFilter = {}): Promise<Service[]
   const filterParts: string[] = []
 
   // Add search query filter (searches in name and description)
+  // if (filter.q) {
+  //   filterParts.push(
+  //     `(name ~ "${filter.q}" || description ~ "${filter.q}" || category ~ "${filter.q}" || location ~ "${filter.q}")`,
+  //   )
+  // }
   if (filter.q) {
-    filterParts.push(
-      `(name ~ "${filter.q}" || description ~ "${filter.q}" || category ~ "${filter.q}" || location ~ "${filter.q}")`,
-    )
+    // Split the query into individual keywords
+    const keywords = filter.q.trim().split(/\s+/)
+
+    // For each keyword, search across all fields
+    const keywordFilters = keywords.map((keyword) => {
+      return `(name ~ "${keyword}" || description ~ "${keyword}" || category ~ "${keyword}" || location ~ "${keyword}")`
+    })
+
+    // Combine all keyword filters with AND logic
+    filterParts.push(`(${keywordFilters.join(' && ')})`)
   }
 
   // Add category filter
