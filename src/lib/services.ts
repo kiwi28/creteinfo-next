@@ -8,7 +8,7 @@ export async function getServices(filter: ServiceFilter = {}): Promise<Service[]
   // Add search query filter (searches in name and description)
   if (filter.q) {
     filterParts.push(
-      `(name ~ "${filter.q}" || description ~ "${filter.q}") || category ~ "${filter.q}") || location ~ "${filter.q}")`,
+      `(name ~ "${filter.q}" || description ~ "${filter.q}" || category ~ "${filter.q}" || location ~ "${filter.q}")`,
     )
   }
 
@@ -30,7 +30,7 @@ export async function getServices(filter: ServiceFilter = {}): Promise<Service[]
   const filterString = filterParts.length > 0 ? filterParts.join(' && ') : ''
 
   try {
-    const result = await pb.collection('services').getList(1, 100, {
+    const result = await pb.collection('services').getList(1, 500, {
       filter: filterString,
       sort: '-created',
     })
