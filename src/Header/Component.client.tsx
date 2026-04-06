@@ -82,7 +82,9 @@ export function HeaderClient() {
   }, [isMenuOpen])
 
   useEffect(() => {
-    handleSearch()
+    if (!isSyncingFromUrl.current) {
+      handleSearch()
+    }
   }, [selectedCategory, selectedLocation])
 
   // Handle search submission
