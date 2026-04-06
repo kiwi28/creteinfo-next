@@ -500,6 +500,10 @@ export function HeaderClient() {
     }
   }, [isMenuOpen])
 
+  useEffect(() => {
+    handleSearch()
+  }, [selectedCategory, selectedLocation])
+
   // Handle search submission
   const handleSearch = useCallback(() => {
     if (!isHomePage) return

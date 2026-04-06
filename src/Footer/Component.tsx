@@ -12,12 +12,11 @@ export async function Footer() {
           {/* Brand Column */}
           <div className="md:col-span-1">
             <Link href="/" className="inline-block mb-4">
-              <span className="font-display text-2xl font-bold text-white">
-                Crete Info
-              </span>
+              <span className="font-display text-2xl font-bold text-white">Crete Info</span>
             </Link>
             <p className="text-white/70 text-sm leading-relaxed">
-              Your complete guide to discovering the magic of Crete. From pristine beaches to ancient ruins, authentic cuisine to warm hospitality.
+              Your complete guide to discovering the magic of Crete. From pristine beaches to
+              ancient ruins, authentic cuisine to warm hospitality.
             </p>
           </div>
 
@@ -75,7 +74,7 @@ export async function Footer() {
             <nav className="flex flex-col gap-2">
               {[
                 { label: 'About Crete', href: '/info' },
-                { label: 'Discover Crete', href: '/discover' },
+                { label: 'Discover Crete', href: '/#discover' },
                 { label: 'Contact', href: '/contact' },
               ].map((link) => (
                 <Link
@@ -97,9 +96,7 @@ export async function Footer() {
           <p className="text-white/50 text-sm">
             &copy; {currentYear} Crete Info. All rights reserved.
           </p>
-          <p className="text-white/50 text-sm">
-            Made with love for Crete
-          </p>
+          <p className="text-white/50 text-sm">Made with love for Crete</p>
         </div>
       </div>
     </footer>

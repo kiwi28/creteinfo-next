@@ -7,6 +7,7 @@ import { getServiceCoverUrl } from '@/lib/utils'
 import type { Service } from '@/types/service'
 import { categoryLabels, locationsMap } from '@/types/service'
 import { ResultsWrapper } from '@/components/ResultsWrapper'
+import CopyLinkButton from '@/components/CopyLinkBtn'
 
 export const metadata: Metadata = {
   title: 'Crete Info - Your Gateway to the Island of Crete',
@@ -73,7 +74,7 @@ export default async function HomePage({ searchParams }: HomePageProps) {
                 Discover pristine beaches, ancient ruins, and authentic Cretan hospitality
               </p>
               <Link
-                href="/discover"
+                href="/#discover"
                 className="inline-flex items-center gap-2 bg-white text-[#1a5276] px-6 py-3 rounded-full font-semibold hover:bg-[#d4a84b] hover:text-white transition-all duration-300 shadow-lg"
               >
                 Discover Crete
@@ -89,10 +90,13 @@ export default async function HomePage({ searchParams }: HomePageProps) {
             <div className="max-w-7xl mx-auto">
               {/* Results Header */}
               <div className="mb-6">
-                <h2 className="font-display text-2xl md:text-3xl font-bold text-[#1a5276]">
+                <h2 className="flex font-display text-2xl md:text-3xl font-bold text-[#1a5276]">
                   {services.length > 0
                     ? `${services.length} result${services.length !== 1 ? 's' : ''} found`
                     : 'No results found'}
+                  <div className="mx-6">
+                    <CopyLinkButton />
+                  </div>
                 </h2>
                 {(params.q || params.category || params.location) && (
                   <p className="text-[#1a5276]/60 mt-1">
@@ -130,9 +134,9 @@ export default async function HomePage({ searchParams }: HomePageProps) {
       </div>
 
       {/* Explore Crete Section - Always show */}
-      <section className="py-12 md:py-16 px-4 md:px-8 bg-[#f8f9fa]">
+
+      {/* <section className="py-12 md:py-16 px-4 md:px-8 bg-[#f8f9fa]">
         <div className="max-w-7xl mx-auto">
-          {/* Section Header */}
           <div className="flex items-center justify-between mb-8">
             <div>
               <h2 className="font-display text-2xl md:text-3xl font-bold text-[#1a5276]">
@@ -149,7 +153,6 @@ export default async function HomePage({ searchParams }: HomePageProps) {
             </Link>
           </div>
 
-          {/* Featured Services Grid */}
           {featuredServices.length > 0 ? (
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6">
               {featuredServices.slice(0, 8).map((service) => (
@@ -162,7 +165,6 @@ export default async function HomePage({ searchParams }: HomePageProps) {
             </div>
           )}
 
-          {/* Mobile View All Link */}
           <div className="md:hidden text-center mt-6">
             <Link
               href="/discover"
@@ -173,7 +175,30 @@ export default async function HomePage({ searchParams }: HomePageProps) {
             </Link>
           </div>
         </div>
+      </section> */}
+      <section className="py-12 md:py-16 px-4 md:px-8">
+        <div className="max-w-7xl mx-auto text-center">
+          <h1 className="font-display text-3xl md:text-4xl font-bold text-[#1a5276] mb-4">
+            Discover Crete
+          </h1>
+          <p className="text-[#1a5276]/70 max-w-2xl mx-auto">
+            Explore our curated selection of services and experiences across the island. From
+            authentic restaurants to boat tours, find everything you need for your Crete adventure.
+          </p>
+        </div>
       </section>
+
+      {/* Categories Grid */}
+      <section className="pb-12 md:pb-16 px-4 md:px-8 bg-[#f8f9fa]">
+        <div className="max-w-7xl mx-auto">
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6">
+            {categories.map((category) => (
+              <CategoryCard key={category.id} category={category} />
+            ))}
+          </div>
+        </div>
+      </section>
+      <a href="discover" />
 
       {/* Info Section */}
       <section className="py-12 md:py-16 px-4 md:px-8 bg-white">
@@ -199,55 +224,146 @@ export default async function HomePage({ searchParams }: HomePageProps) {
   )
 }
 
-// Service Card Component
-function ServiceCard({ service, featured = false }: { service: Service; featured?: boolean }) {
-  const imageUrl = getServiceCoverUrl(service) || '/images/placeholder-service.jpg'
-  const categoryKey = service.category?.[0] || ''
-  const categoryLabel = categoryLabels[categoryKey] || categoryKey
+const categories = [
+  {
+    id: 'restaurants',
+    title: 'Restaurants',
+    description: 'Discover authentic Greek cuisine and international dining options',
+    image:
+      'https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80',
+  },
+  {
+    id: 'cretan-groups',
+    title: 'Cretan Groups',
+    description: 'Join local groups and communities to experience authentic Crete',
+    image:
+      'https://images.unsplash.com/photo-1519225421980-715cb0215aed?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80',
+  },
+  {
+    id: 'shops',
+    title: 'Shops',
+    description: 'Find local crafts, souvenirs, and shopping experiences',
+    image:
+      'https://images.unsplash.com/photo-1441986300917-64674bd600d8?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80',
+  },
+  {
+    id: 'taxi',
+    title: 'Taxi',
+    description: 'Reliable transportation services across Crete',
+    image:
+      'https://images.unsplash.com/photo-1449824913935-59a10b8d2000?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80',
+  },
+  {
+    id: 'boats',
+    title: 'Boats',
+    description: 'Explore the Mediterranean with boat tours and rentals',
+    image:
+      'https://images.unsplash.com/photo-1544551763-46a013bb70d5?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80',
+  },
+  {
+    id: 'excursions',
+    title: 'Excursions',
+    description: 'Guided tours and adventure experiences in Crete',
+    image:
+      'https://images.unsplash.com/photo-1551632811-561732d1e306?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80',
+  },
+  {
+    id: 'rent-a-car',
+    title: 'Rent a Car',
+    description: 'Freedom to explore Crete at your own pace',
+    image:
+      'https://images.unsplash.com/photo-1449824913935-59a10b8d2000?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80',
+  },
+  {
+    id: 'accommodations',
+    title: 'Accommodations',
+    description: 'Find the perfect place to stay during your Crete adventure',
+    image:
+      'https://images.unsplash.com/photo-1566073771259-6a8506099945?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80',
+  },
+]
 
+function CategoryCard({ category }: { category: (typeof categories)[0] }) {
   return (
     <Link
-      href={`/services/${service.id}`}
+      href={`/?category=${category.id}`}
       className="group bg-white rounded-xl overflow-hidden shadow-sm hover:shadow-lg transition-all duration-300 hover:-translate-y-1"
     >
       {/* Image */}
       <div className="relative aspect-[4/3] overflow-hidden bg-[#1a5276]/10">
         <Image
-          src={imageUrl}
-          alt={service.name}
+          src={category.image}
+          alt={category.title}
           fill
           className="object-cover group-hover:scale-105 transition-transform duration-500"
           sizes="(max-width: 768px) 50vw, 25vw"
         />
-        {featured && (
-          <div className="absolute top-2 right-2 bg-[#d4a84b] text-white px-2 py-0.5 rounded-full text-xs font-medium flex items-center gap-1">
-            <Star className="w-3 h-3 fill-current" />
-            Featured
-          </div>
-        )}
       </div>
 
       {/* Content */}
       <div className="p-3 md:p-4">
         <h3 className="font-semibold text-[#1a5276] text-sm md:text-base mb-1 group-hover:text-[#2980b9] transition-colors line-clamp-1">
-          {service.name}
+          {category.title}
         </h3>
-        <div className="flex items-center gap-2 text-xs text-[#1a5276]/60">
-          <span className="font-medium">{categoryLabel}</span>
-          {service.location && (
-            <>
-              <span>•</span>
-              <span className="flex items-center gap-1">
-                <MapPin className="w-3 h-3" />
-                {locationsMap[service.location as keyof typeof locationsMap] || ''}
-              </span>
-            </>
-          )}
-        </div>
-        {service.description && (
-          <p className="text-xs text-[#1a5276]/50 mt-2 line-clamp-2">{service.description}</p>
-        )}
+        <p className="text-xs text-[#1a5276]/60 line-clamp-2 mb-2">{category.description}</p>
+        <span className="inline-flex items-center gap-1 text-xs font-medium text-[#1a5276] group-hover:text-[#d4a84b] transition-colors">
+          View All
+          <ArrowRight className="w-3 h-3" />
+        </span>
       </div>
     </Link>
   )
 }
+
+// Service Card Component
+// function ServiceCard({ service, featured = false }: { service: Service; featured?: boolean }) {
+//   const imageUrl = getServiceCoverUrl(service) || '/images/placeholder-service.jpg'
+//   const categoryKey = service.category?.[0] || ''
+//   const categoryLabel = categoryLabels[categoryKey] || categoryKey
+
+//   return (
+//     <Link
+//       href={`/services/${service.id}`}
+//       className="group bg-white rounded-xl overflow-hidden shadow-sm hover:shadow-lg transition-all duration-300 hover:-translate-y-1"
+//     >
+//       {/* Image */}
+//       <div className="relative aspect-[4/3] overflow-hidden bg-[#1a5276]/10">
+//         <Image
+//           src={imageUrl}
+//           alt={service.name}
+//           fill
+//           className="object-cover group-hover:scale-105 transition-transform duration-500"
+//           sizes="(max-width: 768px) 50vw, 25vw"
+//         />
+//         {featured && (
+//           <div className="absolute top-2 right-2 bg-[#d4a84b] text-white px-2 py-0.5 rounded-full text-xs font-medium flex items-center gap-1">
+//             <Star className="w-3 h-3 fill-current" />
+//             Featured
+//           </div>
+//         )}
+//       </div>
+
+//       {/* Content */}
+//       <div className="p-3 md:p-4">
+//         <h3 className="font-semibold text-[#1a5276] text-sm md:text-base mb-1 group-hover:text-[#2980b9] transition-colors line-clamp-1">
+//           {service.name}
+//         </h3>
+//         <div className="flex items-center gap-2 text-xs text-[#1a5276]/60">
+//           <span className="font-medium">{categoryLabel}</span>
+//           {service.location && (
+//             <>
+//               <span>•</span>
+//               <span className="flex items-center gap-1">
+//                 <MapPin className="w-3 h-3" />
+//                 {locationsMap[service.location as keyof typeof locationsMap] || ''}
+//               </span>
+//             </>
+//           )}
+//         </div>
+//         {service.description && (
+//           <p className="text-xs text-[#1a5276]/50 mt-2 line-clamp-2">{service.description}</p>
+//         )}
+//       </div>
+//     </Link>
+//   )
+// }

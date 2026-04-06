@@ -8,6 +8,7 @@ import { getServiceById, getServices } from '@/lib/services'
 import { getServiceCoverUrl, getServiceDetailUrls } from '@/lib/utils'
 import type { Service } from '@/types/service'
 import { categoryLabels, locationsMap } from '@/types/service'
+import CopyLinkButton from '@/components/CopyLinkBtn'
 
 interface ServicePageProps {
   params: Promise<{
@@ -109,6 +110,7 @@ export default async function ServicePage({ params }: ServicePageProps) {
                       service.location}
                   </span>
                 )}
+                <CopyLinkButton />
               </div>
             </div>
 
