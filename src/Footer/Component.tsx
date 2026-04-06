@@ -69,13 +69,19 @@ export async function Footer() {
           {/* Info Column */}
           <div>
             <h4 className="font-semibold text-[#d4a84b] mb-4 text-sm uppercase tracking-wider">
-              Information
+              Contact us
             </h4>
             <nav className="flex flex-col gap-2">
               {[
-                { label: 'About Crete', href: '/info' },
-                { label: 'Discover Crete', href: '/#discover' },
-                { label: 'Contact', href: '/contact' },
+                { label: 'Phone - 00306972428721', href: '' },
+                {
+                  label: 'Facebook - Crete Info',
+                  href: 'https://www.facebook.com/creteinfogreece',
+                },
+                {
+                  label: 'Email - crete.info.promotions@gmail.com',
+                  href: 'mailto:crete.info.promotions@gmail.com',
+                },
               ].map((link) => (
                 <Link
                   key={link.href}
