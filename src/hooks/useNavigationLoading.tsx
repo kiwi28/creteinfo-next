@@ -1,36 +1,30 @@
 'use client'
 
-import {
-  createContext,
-  useContext,
-  useState,
-  useEffect,
-  useRef,
-  useTransition,
-  type ReactNode,
-} from 'react'
+import { createContext, useContext, useState, useEffect, useRef, type ReactNode } from 'react'
 import { usePathname, useSearchParams } from 'next/navigation'
 
 /**
  * Navigation Loading Context
  *
- * Next.js App Router doesn't provide a built-in useNavigation hook.
- * This context provides a way to track navigation state across the app
- * using React's useTransition and URL change detection.
+ * Tracks navigation state for showing loading indicators.
+ * Works with both link clicks and programmatic navigation (router.replace/push).
  *
  * Usage:
  * 1. Wrap your app with NavigationLoadingProvider
  * 2. Use useNavigationLoading() to read the loading state
+ * 3. Call startNavigation() before programmatic navigation (router.replace/push)
  */
 
 interface NavigationLoadingState {
   isPending: boolean
   isLoading: boolean
+  startNavigation: () => void
 }
 
 const NavigationLoadingContext = createContext<NavigationLoadingState>({
   isPending: false,
   isLoading: false,
+  startNavigation: () => {},
 })
 
 interface NavigationLoadingProviderProps {
@@ -39,13 +33,9 @@ interface NavigationLoadingProviderProps {
 
 export function NavigationLoadingProvider({ children }: NavigationLoadingProviderProps) {
   const [isPending, setIsPending] = useState(false)
-  const [isTransitionPending] = useTransition()
   const pathname = usePathname()
   const searchParams = useSearchParams()
   const prevUrlRef = useRef('')
-
-  // Combine transition pending state with our manual tracking
-  const isLoading = isPending || isTransitionPending
 
   // Reset loading state when URL changes (navigation completed)
   useEffect(() => {
@@ -77,9 +67,12 @@ export function NavigationLoadingProvider({ children }: NavigationLoadingProvide
     return () => document.removeEventListener('click', handleClick)
   }, [])
 
+  const startNavigation = () => setIsPending(true)
+
   const value: NavigationLoadingState = {
-    isPending: isLoading,
-    isLoading,
+    isPending,
+    isLoading: isPending,
+    startNavigation,
   }
 
   return (
