@@ -9,6 +9,7 @@ import { getServiceCoverUrl, getServiceDetailUrls } from '@/lib/utils'
 import type { Service } from '@/types/service'
 import { categoryLabels, locationsMap } from '@/types/service'
 import CopyLinkButton from '@/components/CopyLinkBtn'
+import { ImageGallery } from '@/components/ImageGallery'
 
 interface ServicePageProps {
   params: Promise<{
@@ -206,21 +207,7 @@ export default async function ServicePage({ params }: ServicePageProps) {
           <div className="lg:col-span-1">
             <h2 className="font-display text-xl font-semibold text-[#1a5276] mb-4">Gallery</h2>
             {detailImageUrls.length > 0 ? (
-              <div className="grid grid-cols-2 gap-2">
-                {detailImageUrls.map((url, index) => (
-                  <div
-                    key={index}
-                    className="relative aspect-square rounded-lg overflow-hidden bg-[#f8f9fa]"
-                  >
-                    <Image
-                      src={url}
-                      alt={`${service.name} - Image ${index + 1}`}
-                      fill
-                      className="object-cover"
-                    />
-                  </div>
-                ))}
-              </div>
+              <ImageGallery images={detailImageUrls} serviceName={service.name} />
             ) : (
               <div className="aspect-square rounded-lg bg-[#f8f9fa] flex items-center justify-center">
                 <span className="text-[#1a5276]/40 text-sm">No images available</span>
