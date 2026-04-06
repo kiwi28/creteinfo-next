@@ -10,6 +10,7 @@ import { Header } from '@/Header/Component'
 import { Providers } from '@/providers'
 import { InitTheme } from '@/providers/Theme/InitTheme'
 import { mergeOpenGraph } from '@/utilities/mergeOpenGraph'
+import { NavigationLoadingProvider } from '@/hooks/useNavigationLoading'
 
 import './globals.css'
 import { getServerSideURL } from '@/utilities/getURL'
@@ -38,9 +39,11 @@ export default async function RootLayout({ children }: { children: React.ReactNo
       </head>
       <body>
         <Providers>
-          <Header />
-          {children}
-          <Footer />
+          <NavigationLoadingProvider>
+            <Header />
+            {children}
+            <Footer />
+          </NavigationLoadingProvider>
         </Providers>
       </body>
     </html>

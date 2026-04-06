@@ -1,7 +1,7 @@
 'use client'
 
 import { createContext, useContext, useState, useEffect, useRef, type ReactNode } from 'react'
-import { usePathname, useSearchParams } from 'next/navigation'
+import { usePathname } from 'next/navigation'
 
 /**
  * Navigation Loading Context
@@ -34,19 +34,25 @@ interface NavigationLoadingProviderProps {
 export function NavigationLoadingProvider({ children }: NavigationLoadingProviderProps) {
   const [isPending, setIsPending] = useState(false)
   const pathname = usePathname()
-  const searchParams = useSearchParams()
-  const prevUrlRef = useRef('')
+  const prevPathnameRef = useRef(pathname)
+  const timeoutRef = useRef<NodeJS.Timeout | null>(null)
 
-  // Reset loading state when URL changes (navigation completed)
+  // Reset loading state when pathname changes (navigation completed)
   useEffect(() => {
-    const currentUrl = `${pathname}?${searchParams.toString()}`
-
-    if (prevUrlRef.current && prevUrlRef.current !== currentUrl) {
+    if (prevPathnameRef.current !== pathname) {
       setIsPending(false)
+      prevPathnameRef.current = pathname
     }
+  }, [pathname])
 
-    prevUrlRef.current = currentUrl
-  }, [pathname, searchParams])
+  // Cleanup timeout on unmount
+  useEffect(() => {
+    return () => {
+      if (timeoutRef.current) {
+        clearTimeout(timeoutRef.current)
+      }
+    }
+  }, [])
 
   // Listen for navigation events via link clicks
   useEffect(() => {
@@ -67,7 +73,17 @@ export function NavigationLoadingProvider({ children }: NavigationLoadingProvide
     return () => document.removeEventListener('click', handleClick)
   }, [])
 
-  const startNavigation = () => setIsPending(true)
+  const startNavigation = () => {
+    setIsPending(true)
+    // Safety timeout to reset loading state if navigation doesn't complete
+    // This handles edge cases like navigation errors
+    if (timeoutRef.current) {
+      clearTimeout(timeoutRef.current)
+    }
+    timeoutRef.current = setTimeout(() => {
+      setIsPending(false)
+    }, 5000)
+  }
 
   const value: NavigationLoadingState = {
     isPending,

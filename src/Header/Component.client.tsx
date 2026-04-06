@@ -426,6 +426,7 @@ import Link from 'next/link'
 import { usePathname, useRouter, useSearchParams } from 'next/navigation'
 import { Menu, X, ChevronDown, Search, MapPin } from 'lucide-react'
 import { locationsMap } from '@/types/service'
+import { useNavigationLoading } from '@/hooks/useNavigationLoading'
 
 // Service type options
 const serviceTypes = [
@@ -450,6 +451,7 @@ export function HeaderClient() {
   const router = useRouter()
   const searchParams = useSearchParams()
   const searchInputRef = useRef<HTMLInputElement>(null)
+  const { startNavigation } = useNavigationLoading()
 
   // Ref to track if we're syncing from URL (prevents circular updates)
   const isSyncingFromUrl = useRef(false)
@@ -515,8 +517,9 @@ export function HeaderClient() {
     if (selectedLocation) params.set('location', selectedLocation)
 
     const newUrl = params.toString() ? `/?${params.toString()}` : '/'
+    startNavigation()
     router.replace(newUrl, { scroll: false })
-  }, [searchQuery, selectedCategory, selectedLocation, router, isHomePage])
+  }, [searchQuery, selectedCategory, selectedLocation, router, isHomePage, startNavigation])
 
   // Handle Enter key in search input
   const handleKeyDown = useCallback(
@@ -533,8 +536,9 @@ export function HeaderClient() {
     setSearchQuery('')
     setSelectedCategory(null)
     setSelectedLocation(null)
+    startNavigation()
     router.push('/', { scroll: false })
-  }, [router])
+  }, [router, startNavigation])
 
   // Check if any filters are active
   const hasActiveFilters = searchQuery || selectedCategory || selectedLocation

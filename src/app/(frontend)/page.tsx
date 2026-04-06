@@ -6,7 +6,7 @@ import { getServices } from '@/lib/services'
 // import { getServiceCoverUrl } from '@/lib/utils'
 import type { Service } from '@/types/service'
 import { categoryLabels } from '@/types/service'
-import { ResultsWrapper } from '@/components/ResultsWrapper'
+import { ResultsSection } from '@/components/ResultsSection'
 import CopyLinkButton from '@/components/CopyLinkBtn'
 
 export const metadata: Metadata = {
@@ -100,11 +100,15 @@ export default async function HomePage({ searchParams }: HomePageProps) {
 
   try {
     if (hasActiveFilters) {
+      console.log('before loading services')
       services = await getServices(filter)
+      console.log('after loading services')
     }
     // Always fetch featured services for explore section
   } catch (error) {
     console.error('Failed to fetch services:', error)
+  } finally {
+    console.log('finally loaded services')
   }
 
   return (
@@ -115,8 +119,8 @@ export default async function HomePage({ searchParams }: HomePageProps) {
           <section className="relative h-[60vh] md:h-[70vh] overflow-hidden">
             {/* Background Image */}
             <div className="absolute inset-0">
-              <div className="absolute inset-0 bg-gradient-to-b from-[#1a5276]/60 via-[#1a5276]/40 to-white" />
-              <div className="w-full h-full bg-gradient-to-br from-[#2980b9] to-[#1a5276]" />
+              <div className="absolute inset-0 bg-linear-to-b from-[#1a5276]/60 via-[#1a5276]/40 to-white" />
+              <div className="w-full h-full bg-linear-to-br from-[#2980b9] to-[#1a5276]" />
             </div>
 
             {/* Content */}
@@ -173,7 +177,7 @@ export default async function HomePage({ searchParams }: HomePageProps) {
                 //     <ServiceCard key={service.id} service={service} />
                 //   ))}
                 // </div>
-                <ResultsWrapper services={services} />
+                <ResultsSection services={services} />
               ) : (
                 <div className="text-center py-12">
                   <p className="text-[#1a5276]/60 mb-4">No services match your search criteria.</p>
