@@ -147,7 +147,7 @@ export default async function HomePage({ searchParams }: HomePageProps) {
 
         {/* Search Results Section - Only show when filters are active */}
         {hasActiveFilters && (
-          <section className="pt-48 md:pt-0 pb-12 px-4 md:px-8">
+          <section className="pt-24 md:pt-0 pb-12 px-4 md:px-8">
             <div className="max-w-7xl mx-auto">
               {/* Results Header */}
               <div className="mb-6">

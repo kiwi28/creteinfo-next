@@ -133,7 +133,7 @@ export function HeaderClient() {
     <header className="bg-white">
       {/* Main Header Row */}
       <div
-        className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 ${
+        className={`px-4 md:px-0 fixed top-0 left-0 right-0 z-50 transition-all duration-500 ${
           isScrolled ? 'bg-white/95 backdrop-blur-md shadow-lg shadow-[#1a5276]/5' : 'bg-white'
         }`}
       >
@@ -157,7 +157,7 @@ export function HeaderClient() {
               </div>
             </Link>
 
-            <div className="relative grow-1 flex gap-2">
+            <div className="relative grow-1 gap-2 hidden md:flex">
               <div className="relative flex-1">
                 <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-[#1a5276]/50" />
                 <input
@@ -208,7 +208,7 @@ export function HeaderClient() {
 
       {/* Search & Filters Section - Desktop only, Hidden on /services pages */}
       {!isServicesPage && (
-        <div className="hidden md:block max-w-7xl mx-auto py-4 pt-28 border-t border-[#1a5276]/10">
+        <div className="px-4 md:px-0 hidden md:block max-w-7xl mx-auto py-4 pt-28 border-t border-[#1a5276]/10">
           {/* Service Type Buttons */}
           <div className="mb-3">
             <p className="text-xs font-semibold text-[#1a5276]/60 uppercase tracking-wider mb-2">
@@ -283,98 +283,94 @@ export function HeaderClient() {
 
       {/* Mobile Menu Panel */}
       <div
-        className={`fixed top-0 right-0 bottom-0 w-[85%] max-w-sm bg-white md:hidden transition-transform duration-500 ease-out shadow-2xl ${
+        className={`z-20 fixed top-10 right-0 bottom-0 w-[85%] max-w-sm bg-white md:hidden transition-transform duration-500 ease-out shadow-2xl ${
           isMenuOpen ? 'translate-x-0' : 'translate-x-full'
         }`}
       >
         <div className="h-full flex flex-col">
           {/* Mobile Search & Filters - Only show if not on services page */}
-          {!isServicesPage && (
-            <div className="p-4 border-b mt-14 border-[#1a5276]/10">
-              {/* Search Input */}
-              <div className="relative mb-4">
-                <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-[#1a5276]/50" />
-                <input
-                  type="text"
-                  value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
-                  onKeyDown={handleKeyDown}
-                  placeholder="Search services..."
-                  className="w-full pl-10 pr-4 py-3 rounded-xl border border-[#1a5276]/20 focus:border-[#1a5276] focus:ring-2 focus:ring-[#1a5276]/20 outline-none transition-all text-[#1a5276] placeholder:text-[#1a5276]/50"
-                />
-                {searchQuery && (
-                  <button
-                    onClick={() => setSearchQuery('')}
-                    className="absolute right-3 top-1/2 -translate-y-1/2 p-1 rounded-full hover:bg-[#1a5276]/10 transition-colors"
-                  >
-                    <X className="w-4 h-4 text-[#1a5276]/50" />
-                  </button>
-                )}
-              </div>
-
-              {/* Service Type Buttons */}
-              <div className="mb-3">
-                <p className="text-xs font-semibold text-[#1a5276]/60 uppercase tracking-wider mb-2">
-                  Service Type
-                </p>
-                <div className="flex flex-wrap gap-2">
-                  {serviceTypes.map((type) => (
-                    <button
-                      key={type.value}
-                      onClick={() =>
-                        setSelectedCategory(selectedCategory === type.value ? null : type.value)
-                      }
-                      className={`px-3 py-1.5 rounded-full text-sm font-medium transition-all ${
-                        selectedCategory === type.value
-                          ? 'bg-[#1a5276] text-white'
-                          : 'bg-[#1a5276]/10 text-[#1a5276] hover:bg-[#1a5276]/20'
-                      }`}
-                    >
-                      {type.label}
-                    </button>
-                  ))}
-                </div>
-              </div>
-
-              {/* Location Buttons */}
-              <div className="mb-3">
-                <p className="text-xs font-semibold text-[#1a5276]/60 uppercase tracking-wider mb-2">
-                  <MapPin className="w-3 h-3 inline mr-1" />
-                  Location
-                </p>
-                <div className="flex flex-wrap gap-2">
-                  {Object.entries(locationsMap).map((entry) => {
-                    const [value, label] = entry
-                    return (
-                      <button
-                        key={value}
-                        onClick={() =>
-                          setSelectedLocation(selectedLocation === value ? null : value)
-                        }
-                        className={`px-3 py-1.5 rounded-full text-sm font-medium transition-all ${
-                          selectedLocation === value
-                            ? 'bg-[#d4a84b] text-white'
-                            : 'bg-[#d4a84b]/10 text-[#d4a84b] hover:bg-[#d4a84b]/20'
-                        }`}
-                      >
-                        {label}
-                      </button>
-                    )
-                  })}
-                </div>
-              </div>
-
-              {/* Clear Filters Button */}
-              {hasActiveFilters && (
+          <div className="p-4 border-b mt-14 border-[#1a5276]/10">
+            {/* Search Input */}
+            <div className="relative mb-4">
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-[#1a5276]/50" />
+              <input
+                type="text"
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                onKeyDown={handleKeyDown}
+                placeholder="Search services..."
+                className="w-full pl-10 pr-4 py-3 rounded-xl border border-[#1a5276]/20 focus:border-[#1a5276] focus:ring-2 focus:ring-[#1a5276]/20 outline-none transition-all text-[#1a5276] placeholder:text-[#1a5276]/50"
+              />
+              {searchQuery && (
                 <button
-                  onClick={clearFilters}
-                  className="text-sm text-[#1a5276]/60 hover:text-[#1a5276] underline underline-offset-2"
+                  onClick={() => setSearchQuery('')}
+                  className="absolute right-3 top-1/2 -translate-y-1/2 p-1 rounded-full hover:bg-[#1a5276]/10 transition-colors"
                 >
-                  Clear all filters
+                  <X className="w-4 h-4 text-[#1a5276]/50" />
                 </button>
               )}
             </div>
-          )}
+
+            {/* Service Type Buttons */}
+            <div className="mb-3">
+              <p className="text-xs font-semibold text-[#1a5276]/60 uppercase tracking-wider mb-2">
+                Service Type
+              </p>
+              <div className="flex flex-wrap gap-2">
+                {serviceTypes.map((type) => (
+                  <button
+                    key={type.value}
+                    onClick={() =>
+                      setSelectedCategory(selectedCategory === type.value ? null : type.value)
+                    }
+                    className={`px-3 py-1.5 rounded-full text-sm font-medium transition-all ${
+                      selectedCategory === type.value
+                        ? 'bg-[#1a5276] text-white'
+                        : 'bg-[#1a5276]/10 text-[#1a5276] hover:bg-[#1a5276]/20'
+                    }`}
+                  >
+                    {type.label}
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            {/* Location Buttons */}
+            <div className="mb-3">
+              <p className="text-xs font-semibold text-[#1a5276]/60 uppercase tracking-wider mb-2">
+                <MapPin className="w-3 h-3 inline mr-1" />
+                Location
+              </p>
+              <div className="flex flex-wrap gap-2">
+                {Object.entries(locationsMap).map((entry) => {
+                  const [value, label] = entry
+                  return (
+                    <button
+                      key={value}
+                      onClick={() => setSelectedLocation(selectedLocation === value ? null : value)}
+                      className={`px-3 py-1.5 rounded-full text-sm font-medium transition-all ${
+                        selectedLocation === value
+                          ? 'bg-[#d4a84b] text-white'
+                          : 'bg-[#d4a84b]/10 text-[#d4a84b] hover:bg-[#d4a84b]/20'
+                      }`}
+                    >
+                      {label}
+                    </button>
+                  )
+                })}
+              </div>
+            </div>
+
+            {/* Clear Filters Button */}
+            {hasActiveFilters && (
+              <button
+                onClick={clearFilters}
+                className="text-sm text-[#1a5276]/60 hover:text-[#1a5276] underline underline-offset-2"
+              >
+                Clear all filters
+              </button>
+            )}
+          </div>
 
           {/* Search Button Footer */}
           <div className="p-6 border-t border-[#1a5276]/10 bg-gradient-to-b from-[#f8f9fa] to-white mt-auto">
