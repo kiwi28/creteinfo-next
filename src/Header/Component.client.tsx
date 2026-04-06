@@ -89,13 +89,18 @@ export function HeaderClient() {
 
   // Handle search submission
   const handleSearch = useCallback(() => {
-    if (!isHomePage) return
+    // if (!isHomePage) return
 
     const params = new URLSearchParams()
 
     if (searchQuery.trim()) params.set('q', searchQuery.trim())
-    if (selectedCategory) params.set('category', selectedCategory)
-    if (selectedLocation) params.set('location', selectedLocation)
+    if (isServicesPage) {
+      params.set('category', '')
+      params.set('location', '')
+    } else {
+      if (selectedCategory) params.set('category', selectedCategory)
+      if (selectedLocation) params.set('location', selectedLocation)
+    }
 
     const newUrl = params.toString() ? `/?${params.toString()}` : '/'
     startNavigation()
