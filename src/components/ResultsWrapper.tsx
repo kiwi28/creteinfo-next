@@ -107,7 +107,7 @@ export function ResultsWrapper({ services, searchQuery, category, location }: Re
 
 // Service Card Component - extracted from page.tsx
 function ServiceCard({ service }: { service: Service }) {
-  const imageUrl = getServiceCoverUrl(service) || '/images/placeholder-service.jpg'
+  const imageUrl = getServiceCoverUrl(service) || '/images/placeholder-service.png'
   const categoryKey = service.category?.[0] || ''
   const categoryLabel = categoryLabels[categoryKey] || categoryKey
 
