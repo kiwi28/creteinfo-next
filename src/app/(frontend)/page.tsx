@@ -90,8 +90,6 @@ export default async function HomePage({ searchParams }: HomePageProps) {
   if (params.category) filter.category = params.category
   if (params.location) filter.location = params.location
 
-  console.log('-----------------------> homepage filter:', filter)
-
   // Check if any filters are active
   const hasActiveFilters = Boolean(params.q || params.category || params.location)
 
@@ -194,7 +192,8 @@ export default async function HomePage({ searchParams }: HomePageProps) {
         )}
       </div>
 
-      <section id="discover" className="py-12 md:py-16 px-4 md:px-8">
+      <section className="py-12 md:py-16 px-4 md:px-8">
+        <div id="discover" className="relative bottom-24"></div>
         <div className="max-w-7xl mx-auto text-center">
           <h1 className="font-display text-3xl md:text-4xl font-bold text-[#1a5276] mb-4">
             Discover Crete
@@ -228,13 +227,6 @@ export default async function HomePage({ searchParams }: HomePageProps) {
             beaches, ancient Minoan ruins, and vibrant culture. From the Palace of Knossos to the
             beaches of Elafonisi, Crete offers something for every traveler.
           </p>
-          <Link
-            href="/info"
-            className="inline-flex items-center gap-2 text-[#1a5276] font-semibold hover:text-[#d4a84b] transition-colors"
-          >
-            Learn More About Crete
-            <ArrowRight className="w-4 h-4" />
-          </Link>
         </div>
       </section>
     </main>
