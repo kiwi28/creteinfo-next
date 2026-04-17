@@ -19,12 +19,14 @@ interface NavigationLoadingState {
   isPending: boolean
   isLoading: boolean
   startNavigation: () => void
+  stopNavigation: () => void
 }
 
 const NavigationLoadingContext = createContext<NavigationLoadingState>({
   isPending: false,
   isLoading: false,
   startNavigation: () => {},
+  stopNavigation: () => {},
 })
 
 interface NavigationLoadingProviderProps {
@@ -76,7 +78,6 @@ export function NavigationLoadingProvider({ children }: NavigationLoadingProvide
   const startNavigation = () => {
     setIsPending(true)
     // Safety timeout to reset loading state if navigation doesn't complete
-    // This handles edge cases like navigation errors
     if (timeoutRef.current) {
       clearTimeout(timeoutRef.current)
     }
@@ -85,10 +86,19 @@ export function NavigationLoadingProvider({ children }: NavigationLoadingProvide
     }, 5000)
   }
 
+  const stopNavigation = () => {
+    setIsPending(false)
+    if (timeoutRef.current) {
+      clearTimeout(timeoutRef.current)
+      timeoutRef.current = null
+    }
+  }
+
   const value: NavigationLoadingState = {
     isPending,
     isLoading: isPending,
     startNavigation,
+    stopNavigation,
   }
 
   return (
