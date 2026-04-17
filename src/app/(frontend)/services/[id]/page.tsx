@@ -8,6 +8,9 @@ import { getServiceById, getServices } from '@/lib/services'
 import { getServiceCoverUrl, getServiceDetailUrls } from '@/lib/utils'
 import type { Service } from '@/types/service'
 import { categoryLabels, locationsMap } from '@/types/service'
+
+// Revalidate service detail pages every 5 minutes as a safety net
+export const revalidate = 300
 import CopyLinkButton from '@/components/CopyLinkBtn'
 import { ImageGallery } from '@/components/ImageGallery'
 

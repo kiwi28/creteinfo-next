@@ -1,6 +1,20 @@
 import { pb } from '@/lib/pocketbase'
 import type { Service, ServiceFormData } from '@/types/service'
 
+const SITE_URL = process.env.NEXT_PUBLIC_SERVER_URL || 'http://localhost:3000'
+
+async function triggerRevalidation(serviceId?: string) {
+  try {
+    await fetch(`${SITE_URL}/api/revalidate`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ serviceId }),
+    })
+  } catch {
+    // Revalidation is best-effort — don't block the user
+  }
+}
+
 export async function fetchServices(query?: string): Promise<Service[]> {
   const filterParts: string[] = []
 
@@ -55,6 +69,7 @@ export async function createService(data: ServiceFormData): Promise<Service> {
   }
 
   const record = await pb.collection('services').create(formData)
+  await triggerRevalidation()
   return record as unknown as Service
 }
 
@@ -89,9 +104,11 @@ export async function updateService(
   // If no changes: don't include field → existing detail images preserved
 
   const record = await pb.collection('services').update(id, formData)
+  await triggerRevalidation(id)
   return record as unknown as Service
 }
 
 export async function deleteService(id: string): Promise<void> {
   await pb.collection('services').delete(id)
+  await triggerRevalidation(id)
 }
