@@ -104,13 +104,15 @@ export default async function ServicePage({ params }: ServicePageProps) {
                 <span className="px-3 py-1 rounded-full text-xs font-medium bg-[#1a5276] text-white">
                   {categoryLabel}
                 </span>
-                {service.location && (
-                  <span className="flex items-center gap-1 text-xs text-[#1a5276]/60">
-                    <MapPin className="w-3 h-3" />
-                    {locationsMap[service.location as keyof typeof locationsMap] ||
-                      service.location}
-                  </span>
-                )}
+                {(() => {
+                  const locs = Array.isArray(service.location) ? service.location : service.location ? [service.location] : []
+                  return locs.map((l) => locationsMap[l as keyof typeof locationsMap] || l).filter(Boolean).map((label, i) => (
+                    <span key={i} className="flex items-center gap-1 text-xs text-[#1a5276]/60">
+                      <MapPin className="w-3 h-3" />
+                      {label}
+                    </span>
+                  ))
+                })()}
                 <CopyLinkButton />
               </div>
             </div>

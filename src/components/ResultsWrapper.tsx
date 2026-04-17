@@ -67,18 +67,27 @@ function ServiceCard({ service }: { service: Service }) {
         </h3>
         <div className="flex items-center gap-2 text-xs text-[#1a5276]/60">
           <span className="font-medium">{categoryLabel}</span>
-          {service.location && (
-            <>
-              <span>•</span>
-              <span className="flex items-center gap-1">
-                <MapPin className="w-3 h-3" />
-                {locationsMap[service.location as keyof typeof locationsMap] || ''}
-              </span>
-            </>
-          )}
+          {(() => {
+            const locs = Array.isArray(service.location) ? service.location : service.location ? [service.location] : []
+            const labels = locs.map((l) => locationsMap[l as keyof typeof locationsMap] || l).filter(Boolean)
+            return labels.length > 0 ? (
+              <>
+                <span>•</span>
+                <span className="flex items-center gap-1">
+                  <MapPin className="w-3 h-3" />
+                  {labels.join(', ')}
+                </span>
+              </>
+            ) : null
+          })()}
         </div>
         {service.description && (
-          <p className="text-xs text-[#1a5276]/50 mt-2 line-clamp-2">{service.description}</p>
+          /* Content from admin's own PocketBase editor (trusted) */
+          /* eslint-disable-next-line react/no-danger */
+          <div
+            className="text-xs text-[#1a5276]/50 mt-2 line-clamp-2 [&_p]:line-clamp-2"
+            dangerouslySetInnerHTML={{ __html: service.description }}
+          />
         )}
       </div>
     </Link>
