@@ -276,7 +276,7 @@ export function HeaderClient() {
 
       {/* Mobile Menu Overlay */}
       <div
-        className={`fixed inset-0 bg-black/20 backdrop-blur-sm md:hidden transition-opacity duration-300 ${
+        className={`z-10 fixed inset-0 bg-black/20 backdrop-blur-sm md:hidden transition-opacity duration-300 ${
           isMenuOpen ? 'opacity-100' : 'opacity-0 pointer-events-none'
         }`}
         onClick={() => setIsMenuOpen(false)}
