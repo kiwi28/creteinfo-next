@@ -105,13 +105,20 @@ export default async function ServicePage({ params }: ServicePageProps) {
                   {categoryLabel}
                 </span>
                 {(() => {
-                  const locs = Array.isArray(service.location) ? service.location : service.location ? [service.location] : []
-                  return locs.map((l) => locationsMap[l as keyof typeof locationsMap] || l).filter(Boolean).map((label, i) => (
-                    <span key={i} className="flex items-center gap-1 text-xs text-[#1a5276]/60">
-                      <MapPin className="w-3 h-3" />
-                      {label}
-                    </span>
-                  ))
+                  const locs = Array.isArray(service.location)
+                    ? service.location
+                    : service.location
+                      ? [service.location]
+                      : []
+                  return locs
+                    .map((l) => locationsMap[l as keyof typeof locationsMap] || l)
+                    .filter(Boolean)
+                    .map((label, i) => (
+                      <span key={i} className="flex items-center gap-1 text-xs text-[#1a5276]/60">
+                        <MapPin className="w-3 h-3" />
+                        {label}
+                      </span>
+                    ))
                 })()}
                 <CopyLinkButton />
               </div>
@@ -120,9 +127,10 @@ export default async function ServicePage({ params }: ServicePageProps) {
             {/* Description */}
             {service.description && (
               <div className="bg-[#f8f9fa] rounded-xl p-6">
-                <p className="text-[#1a5276]/80 leading-relaxed whitespace-pre-line">
-                  {service.description}
-                </p>
+                <div
+                  className="text-[#1a5276]/80 leading-relaxed whitespace-pre-line"
+                  dangerouslySetInnerHTML={{ __html: service.description }}
+                />
               </div>
             )}
 
