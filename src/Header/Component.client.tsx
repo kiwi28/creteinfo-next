@@ -82,10 +82,11 @@ export function HeaderClient() {
   }, [isMenuOpen])
 
   useEffect(() => {
+    if (!isHomePage) return
     if (!isSyncingFromUrl.current) {
       handleSearch()
     }
-  }, [selectedCategory, selectedLocation])
+  }, [selectedCategory, selectedLocation, isHomePage])
 
   // Handle search submission
   const handleSearch = useCallback(() => {
