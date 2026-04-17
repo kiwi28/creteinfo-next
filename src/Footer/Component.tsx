@@ -20,8 +20,7 @@ export async function Footer() {
             </p>
           </div>
 
-          {/* Services Column */}
-          <div>
+          {/* <div>
             <h4 className="font-semibold text-[#d4a84b] mb-4 text-sm uppercase tracking-wider">
               Services
             </h4>
@@ -43,7 +42,6 @@ export async function Footer() {
             </nav>
           </div>
 
-          {/* More Services Column */}
           <div>
             <h4 className="font-semibold text-[#d4a84b] mb-4 text-sm uppercase tracking-wider">
               More
@@ -64,7 +62,7 @@ export async function Footer() {
                 </Link>
               ))}
             </nav>
-          </div>
+          </div> */}
 
           {/* Info Column */}
           <div>
