@@ -66,24 +66,19 @@ export function ServiceViewMode({ service, onEdit, onDelete }: ServiceViewModePr
         </div>
         <div>
           <label className="text-xs font-semibold text-[#1a5276]/60 uppercase tracking-wider">Location</label>
-          <p className="text-[#1a5276] mt-0.5 flex items-center gap-1">
-            <MapPin className="w-3 h-3" />
-            {locationsMap[service.location as keyof typeof locationsMap] || service.location || '—'}
-          </p>
-        </div>
-        <div>
-          <label className="text-xs font-semibold text-[#1a5276]/60 uppercase tracking-wider">Flags</label>
-          <div className="flex gap-1.5 mt-0.5">
-            {service.featuredExplore && (
-              <span className="px-2 py-0.5 rounded-full text-xs font-medium bg-[#d4a84b]/10 text-[#d4a84b]">
-                Featured
-              </span>
+          <div className="flex flex-wrap gap-1 mt-0.5">
+            {(Array.isArray(service.location) ? service.location : service.location ? [service.location] : []).map(
+              (l) => (
+                <span
+                  key={l}
+                  className="px-2 py-0.5 rounded-full text-xs font-medium bg-[#d4a84b]/10 text-[#d4a84b] flex items-center gap-1"
+                >
+                  <MapPin className="w-3 h-3" />
+                  {locationsMap[l as keyof typeof locationsMap] || l}
+                </span>
+              ),
             )}
-            {service.flag && (
-              <span className="px-2 py-0.5 rounded-full text-xs font-medium bg-[#1a5276]/10 text-[#1a5276]">
-                Flag
-              </span>
-            )}
+            {!service.location && <span className="text-sm text-[#1a5276]/50">—</span>}
           </div>
         </div>
       </div>

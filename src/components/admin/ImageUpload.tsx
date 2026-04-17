@@ -14,6 +14,7 @@ interface ImageUploadProps {
   onRemoveExisting?: (filename: string) => void
   removeCoverImage: boolean
   onRemoveCoverChange: (remove: boolean) => void
+  removedFiles?: string[]
 }
 
 export function ImageUpload({
@@ -24,6 +25,7 @@ export function ImageUpload({
   onRemoveExisting,
   removeCoverImage,
   onRemoveCoverChange,
+  removedFiles = [],
 }: ImageUploadProps) {
   const fileInputRef = useRef<HTMLInputElement>(null)
   const [dragOver, setDragOver] = useState(false)
@@ -33,7 +35,13 @@ export function ImageUpload({
       ? service?.coverImage && !removeCoverImage
         ? [{ url: getServiceCoverUrl(service)!, filename: service.coverImage }]
         : []
-      : service?.detailImages?.map((f, i) => ({ url: getServiceDetailUrls(service)[i], filename: f })) || []
+      : service?.detailImages
+          ?.filter((f) => !removedFiles.includes(f))
+          .map((f, i) => {
+            const urls = getServiceDetailUrls(service)
+            const originalIndex = service.detailImages!.indexOf(f)
+            return { url: urls[originalIndex], filename: f }
+          }) || []
 
   const handleFileSelect = (files: FileList | null) => {
     if (!files) return
@@ -61,6 +69,7 @@ export function ImageUpload({
       <label className="text-xs font-semibold text-[#1a5276]/60 uppercase tracking-wider">
         {mode === 'cover' ? 'Cover Image' : 'Detail Images'}
       </label>
+      <p className="text-[10px] text-[#1a5276]/40 -mt-1">Max file size: 5 MB per image</p>
 
       <div className="flex flex-wrap gap-2">
         {/* Existing images */}

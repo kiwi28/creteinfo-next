@@ -23,16 +23,13 @@ export interface Service {
 export interface ServiceFormData {
   name: string
   category: string[]
-  location: string
+  location: string | string[]
   contact: string
   phone: string
   email: string
   website: string
   airbnb: string
   description: string
-  flag: boolean
-  featuredExplore: boolean
-  var: string
   coverImage: File | null
   detailImages: File[]
   removeCoverImage: boolean

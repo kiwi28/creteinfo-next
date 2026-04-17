@@ -23,28 +23,30 @@ export function ServiceEditForm({ service, onSave, onCancel }: ServiceEditFormPr
   const [removeCoverImage, setRemoveCoverImage] = useState(false)
   const [removeDetailImages, setRemoveDetailImages] = useState<string[]>([])
 
+  // Normalize location to array
+  const normalizeLocation = (loc: string | string[] | undefined): string[] => {
+    if (Array.isArray(loc)) return loc
+    if (loc) return [loc]
+    return []
+  }
+
   const { register, handleSubmit, setValue, watch } = useForm<ServiceFormData>({
     defaultValues: {
       name: service?.name || '',
       category: service?.category || [],
-      location: service?.location || '',
+      location: normalizeLocation(service?.location),
       contact: service?.contact || '',
       phone: service?.phone || '',
       email: service?.email || '',
       website: service?.website || '',
       airbnb: service?.airbnb || '',
       description: service?.description || '',
-      flag: service?.flag || false,
-      featuredExplore: service?.featuredExplore || false,
-      var: service?.var || '',
     },
   })
 
   const description = watch('description')
   const selectedCategories = watch('category') || []
-  const selectedLocation = watch('location')
-  const flag = watch('flag')
-  const featuredExplore = watch('featuredExplore')
+  const selectedLocations = normalizeLocation(watch('location'))
 
   const toggleCategory = (value: string) => {
     const current = selectedCategories
@@ -58,6 +60,18 @@ export function ServiceEditForm({ service, onSave, onCancel }: ServiceEditFormPr
     }
   }
 
+  const toggleLocation = (value: string) => {
+    const current = selectedLocations
+    if (current.includes(value)) {
+      setValue(
+        'location',
+        current.filter((l) => l !== value),
+      )
+    } else {
+      setValue('location', [...current, value])
+    }
+  }
+
   const onSubmit = async (data: ServiceFormData) => {
     if (!data.name.trim()) {
       toast.error('Service name is required')
@@ -68,6 +82,7 @@ export function ServiceEditForm({ service, onSave, onCancel }: ServiceEditFormPr
     try {
       const payload: ServiceFormData = {
         ...data,
+        location: data.location,
         coverImage: newCoverFile[0] || null,
         detailImages: newDetailFiles,
         removeCoverImage,
@@ -75,15 +90,22 @@ export function ServiceEditForm({ service, onSave, onCancel }: ServiceEditFormPr
       }
 
       if (service) {
-        await updateService(service.id, payload)
+        await updateService(service.id, payload, service.detailImages || [])
         toast.success('Service updated successfully')
       } else {
         await createService(payload)
         toast.success('Service created successfully')
       }
       onSave()
-    } catch (err) {
-      const message = err instanceof Error ? err.message : 'Failed to save service'
+    } catch (err: unknown) {
+      let message = 'Failed to save service'
+      if (err && typeof err === 'object' && 'data' in err) {
+        const validationErrors = (err as { data: Record<string, { message?: string }> }).data
+        const firstError = Object.values(validationErrors)[0]
+        if (firstError?.message) message = firstError.message
+      } else if (err instanceof Error) {
+        message = err.message
+      }
       toast.error(message)
     } finally {
       setIsSubmitting(false)
@@ -132,18 +154,22 @@ export function ServiceEditForm({ service, onSave, onCancel }: ServiceEditFormPr
         <label className="block text-xs font-semibold text-[#1a5276]/60 uppercase tracking-wider mb-1">
           Location
         </label>
-        <select
-          value={selectedLocation || ''}
-          onChange={(e) => setValue('location', e.target.value)}
-          className="w-full px-3 py-2 rounded-lg border border-[#1a5276]/20 focus:border-[#1a5276] focus:ring-2 focus:ring-[#1a5276]/20 outline-none transition-all text-[#1a5276] text-sm bg-white"
-        >
-          <option value="">— Select location —</option>
+        <div className="flex flex-wrap gap-2">
           {Object.entries(locationsMap).map(([value, label]) => (
-            <option key={value} value={value}>
+            <button
+              key={value}
+              type="button"
+              onClick={() => toggleLocation(value)}
+              className={`px-3 py-1.5 rounded-full text-sm font-medium transition-all ${
+                selectedLocations.includes(value)
+                  ? 'bg-[#d4a84b] text-white'
+                  : 'bg-[#d4a84b]/10 text-[#d4a84b] hover:bg-[#d4a84b]/20'
+              }`}
+            >
               {label}
-            </option>
+            </button>
           ))}
-        </select>
+        </div>
       </div>
 
       {/* Contact Fields */}
@@ -195,14 +221,6 @@ export function ServiceEditForm({ service, onSave, onCancel }: ServiceEditFormPr
             placeholder="https://airbnb.com/..."
           />
         </div>
-        <div>
-          <label className="block text-xs font-semibold text-[#1a5276]/60 uppercase tracking-wider mb-1">Var</label>
-          <input
-            {...register('var')}
-            className="w-full px-3 py-2 rounded-lg border border-[#1a5276]/20 focus:border-[#1a5276] focus:ring-2 focus:ring-[#1a5276]/20 outline-none transition-all text-[#1a5276] text-sm"
-            placeholder="Var"
-          />
-        </div>
       </div>
 
       {/* Description */}
@@ -211,28 +229,6 @@ export function ServiceEditForm({ service, onSave, onCancel }: ServiceEditFormPr
           Description
         </label>
         <RichTextEditor content={description || ''} onChange={(html) => setValue('description', html)} />
-      </div>
-
-      {/* Flags */}
-      <div className="flex gap-6">
-        <label className="flex items-center gap-2 cursor-pointer">
-          <input
-            type="checkbox"
-            checked={flag || false}
-            onChange={(e) => setValue('flag', e.target.checked)}
-            className="w-4 h-4 rounded border-[#1a5276]/30 text-[#1a5276] focus:ring-[#1a5276]/20"
-          />
-          <span className="text-sm text-[#1a5276]">Flag</span>
-        </label>
-        <label className="flex items-center gap-2 cursor-pointer">
-          <input
-            type="checkbox"
-            checked={featuredExplore || false}
-            onChange={(e) => setValue('featuredExplore', e.target.checked)}
-            className="w-4 h-4 rounded border-[#1a5276]/30 text-[#d4a84b] focus:ring-[#d4a84b]/20"
-          />
-          <span className="text-sm text-[#1a5276]">Featured</span>
-        </label>
       </div>
 
       {/* Images */}
@@ -253,6 +249,7 @@ export function ServiceEditForm({ service, onSave, onCancel }: ServiceEditFormPr
         onRemoveExisting={(filename) => setRemoveDetailImages((prev) => [...prev, filename])}
         removeCoverImage={false}
         onRemoveCoverChange={() => {}}
+        removedFiles={removeDetailImages}
       />
 
       {/* Submit */}

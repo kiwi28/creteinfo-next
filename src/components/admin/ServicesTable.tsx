@@ -49,9 +49,6 @@ export function ServicesTable({ services, isLoading, onRowClick }: ServicesTable
                 Location
               </th>
               <th className="text-left px-4 py-3 text-xs font-semibold text-[#1a5276]/70 uppercase tracking-wider">
-                Flags
-              </th>
-              <th className="text-left px-4 py-3 text-xs font-semibold text-[#1a5276]/70 uppercase tracking-wider">
                 Updated
               </th>
             </tr>
@@ -62,8 +59,14 @@ export function ServicesTable({ services, isLoading, onRowClick }: ServicesTable
               const categories = service.category
                 ?.map((c) => categoryLabels[c] || c)
                 .join(', ')
-              const location =
-                locationsMap[service.location as keyof typeof locationsMap] || service.location
+              const rawLocations = Array.isArray(service.location)
+                ? service.location
+                : service.location
+                  ? [service.location]
+                  : []
+              const location = rawLocations
+                .map((l) => locationsMap[l as keyof typeof locationsMap] || l)
+                .join(', ')
 
               return (
                 <tr
@@ -96,20 +99,6 @@ export function ServicesTable({ services, isLoading, onRowClick }: ServicesTable
                   </td>
                   <td className="px-4 py-3">
                     <span className="text-sm text-[#1a5276]/70">{location || '—'}</span>
-                  </td>
-                  <td className="px-4 py-3">
-                    <div className="flex gap-1.5">
-                      {service.featuredExplore && (
-                        <span className="px-2 py-0.5 rounded-full text-xs font-medium bg-[#d4a84b]/10 text-[#d4a84b]">
-                          Featured
-                        </span>
-                      )}
-                      {service.flag && (
-                        <span className="px-2 py-0.5 rounded-full text-xs font-medium bg-[#1a5276]/10 text-[#1a5276]">
-                          Flag
-                        </span>
-                      )}
-                    </div>
                   </td>
                   <td className="px-4 py-3">
                     <span className="text-xs text-[#1a5276]/50">
