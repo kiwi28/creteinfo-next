@@ -66,11 +66,11 @@ export async function updateService(
   const formData = new FormData()
   appendBaseFields(formData, data)
 
-  // Cover image handling
-  if (data.removeCoverImage) {
-    formData.append('coverImage', '')
-  } else if (data.coverImage) {
+  // Cover image: new file > remove > keep existing
+  if (data.coverImage) {
     formData.append('coverImage', data.coverImage)
+  } else if (data.removeCoverImage) {
+    formData.append('coverImage', '')
   }
   // If neither: don't include field → existing cover preserved
 

@@ -32,7 +32,7 @@ export function ImageUpload({
 
   const existingUrls =
     mode === 'cover'
-      ? service?.coverImage && !removeCoverImage
+      ? service?.coverImage && !removeCoverImage && newFiles.length === 0
         ? [{ url: getServiceCoverUrl(service)!, filename: service.coverImage }]
         : []
       : service?.detailImages
@@ -48,7 +48,6 @@ export function ImageUpload({
     const fileArray = Array.from(files)
     if (mode === 'cover') {
       onNewFilesChange(fileArray.slice(0, 1))
-      onRemoveCoverChange(false)
     } else {
       onNewFilesChange([...newFiles, ...fileArray])
     }
@@ -116,27 +115,29 @@ export function ImageUpload({
           </div>
         ))}
 
-        {/* Add button */}
-        <button
-          type="button"
-          onClick={() => fileInputRef.current?.click()}
-          onDragOver={(e) => {
-            e.preventDefault()
-            setDragOver(true)
-          }}
-          onDragLeave={() => setDragOver(false)}
-          onDrop={handleDrop}
-          className={`w-20 h-20 rounded-lg border-2 border-dashed flex flex-col items-center justify-center gap-1 transition-colors ${
-            dragOver
-              ? 'border-[#1a5276] bg-[#1a5276]/5'
-              : 'border-gray-300 hover:border-[#1a5276]/40 hover:bg-gray-50'
-          }`}
-        >
-          {mode === 'cover' ? <Upload className="w-4 h-4 text-gray-400" /> : <Plus className="w-4 h-4 text-gray-400" />}
-          <span className="text-[10px] text-gray-400">
-            {mode === 'cover' ? 'Upload' : 'Add'}
-          </span>
-        </button>
+        {/* Add button — hidden for cover if already has an image */}
+        {(mode === 'detail' || (existingUrls.length === 0 && newFiles.length === 0)) && (
+          <button
+            type="button"
+            onClick={() => fileInputRef.current?.click()}
+            onDragOver={(e) => {
+              e.preventDefault()
+              setDragOver(true)
+            }}
+            onDragLeave={() => setDragOver(false)}
+            onDrop={handleDrop}
+            className={`w-20 h-20 rounded-lg border-2 border-dashed flex flex-col items-center justify-center gap-1 transition-colors ${
+              dragOver
+                ? 'border-[#1a5276] bg-[#1a5276]/5'
+                : 'border-gray-300 hover:border-[#1a5276]/40 hover:bg-gray-50'
+            }`}
+          >
+            {mode === 'cover' ? <Upload className="w-4 h-4 text-gray-400" /> : <Plus className="w-4 h-4 text-gray-400" />}
+            <span className="text-[10px] text-gray-400">
+              {mode === 'cover' ? 'Upload' : 'Add'}
+            </span>
+          </button>
+        )}
       </div>
 
       <input
