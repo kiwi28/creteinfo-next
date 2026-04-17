@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useRef } from 'react'
+import { useEffect } from 'react'
 import { useNavigationLoading } from '@/hooks/useNavigationLoading'
 import { LoadingWrapper } from '@/components/LoadingWrapper'
 import { ResultsWrapper } from '@/components/ResultsWrapper'
@@ -8,13 +8,11 @@ import type { Service } from '@/types/service'
 
 export function ResultsSection({ services }: { services: Service[] }) {
   const { isPending, stopNavigation } = useNavigationLoading()
-  const prevServicesRef = useRef(services)
 
   useEffect(() => {
-    if (isPending && prevServicesRef.current !== services) {
+    if (isPending) {
       stopNavigation()
     }
-    prevServicesRef.current = services
   }, [services, isPending, stopNavigation])
 
   return (
