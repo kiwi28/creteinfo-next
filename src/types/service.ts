@@ -16,6 +16,27 @@ export interface Service {
   created: string
   updated: string
   featured: boolean
+  var: string
+  collectionId: string
+}
+
+export interface ServiceFormData {
+  name: string
+  category: string[]
+  location: string
+  contact: string
+  phone: string
+  email: string
+  website: string
+  airbnb: string
+  description: string
+  flag: boolean
+  featuredExplore: boolean
+  var: string
+  coverImage: File | null
+  detailImages: File[]
+  removeCoverImage: boolean
+  removeDetailImages: string[]
 }
 
 export interface ServiceFilter {
