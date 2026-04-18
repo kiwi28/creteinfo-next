@@ -12,22 +12,18 @@ const NEXT_PUBLIC_SERVER_URL = process.env.VERCEL_PROJECT_PRODUCTION_URL
 
 const nextConfig: NextConfig = {
   images: {
-    domains: ['images.unsplash.com'],
+    loader: 'custom',
+    loaderFile: './src/lib/pbImageLoader.ts',
     remotePatterns: [
-      // PocketBase images
       {
         protocol: 'https',
         hostname: 'pb-fly-creteinfo.fly.dev',
         pathname: '/api/files/**',
       },
-      // Self URL for dynamic OG images
-      ...[NEXT_PUBLIC_SERVER_URL].map((item) => {
-        const url = new URL(item)
-        return {
-          hostname: url.hostname,
-          protocol: url.protocol.replace(':', '') as 'http' | 'https',
-        }
-      }),
+      {
+        protocol: 'https',
+        hostname: 'images.unsplash.com',
+      },
     ],
   },
   webpack: (webpackConfig) => {

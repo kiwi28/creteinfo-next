@@ -33,6 +33,7 @@ export function ImageGallery({ images, serviceName }: ImageGalleryProps) {
               src={url}
               alt={`${serviceName} - Image ${i + 1}`}
               fill
+              sizes="(max-width: 768px) 50vw, 25vw"
               className="object-cover"
             />
           </button>
