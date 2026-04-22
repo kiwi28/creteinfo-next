@@ -154,14 +154,24 @@ export default async function HomePage({ searchParams }: HomePageProps) {
 
       <section className="py-12 md:py-16 px-4 md:px-8">
         <div id="discover" className="relative bottom-24"></div>
-        <div className="max-w-7xl mx-auto text-center">
-          <h1 className="font-display text-3xl md:text-4xl font-bold text-[#1a5276] mb-4">
+        <div className="max-w-7xl mx-auto">
+          <h1 className="font-display text-3xl md:text-4xl font-bold text-[#1a5276] mb-8 text-center">
             Discover Crete
           </h1>
-          <p className="text-[#1a5276]/70 max-w-2xl mx-auto">
-            Explore our curated selection of services and experiences across the island. From
-            authentic restaurants to boat tours, find everything you need for your Crete adventure.
-          </p>
+          {/* <div className="text-[#1a5276]/70 max-w-fit mx-auto space-y-2 text-center"> */}
+          <div className="text-[#1a5276]/70 max-w-fit mx-auto space-y-2 text-left md:relative md:left-20">
+            <p>Crete is not just a vacation... it&apos;s a state of mind</p>
+            <br />
+            <p>It&apos;s that morning when you drink your coffee looking at the sea.</p>
+            <p>It&apos;s the smell of warm bread in a small village, where no one is in a hurry.</p>
+            <p>
+              It&apos;s the sound of the waves and the silence that makes you forget everything.
+            </p>
+            <br />
+            <p>Crete cannot be explained. It can be felt.</p>
+            <br />
+            <p>It all started simply... from the desire to help.</p>
+          </div>
         </div>
       </section>
 

@@ -63,7 +63,7 @@ function ServiceCard({ service }: { service: Service }) {
 
       {/* Content */}
       <div className="p-3 md:p-4">
-        <h3 className="font-semibold text-[#1a5276] text-sm md:text-base mb-1 group-hover:text-[#2980b9] transition-colors line-clamp-1">
+        <h3 className="font-semibold text-[#1a5276] text-sm md:text-base mb-1 group-hover:text-[#2980b9] transition-colors line-clamp-none">
           {service.name}
         </h3>
         <div className="flex items-center gap-2 text-xs text-[#1a5276]/60">
