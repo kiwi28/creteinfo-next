@@ -3,21 +3,10 @@
 import React, { useState, useEffect, useCallback, useRef } from 'react'
 import Link from 'next/link'
 import { usePathname, useRouter, useSearchParams } from 'next/navigation'
-import { Menu, X, ChevronDown, Search, MapPin } from 'lucide-react'
+import { X, Search, MapPin } from 'lucide-react'
 import { locationsMap } from '@/types/service'
 import { useNavigationLoading } from '@/hooks/useNavigationLoading'
-
-// Service type options
-const serviceTypes = [
-  { label: 'Restaurants', value: 'restaurants' },
-  { label: 'Taxi', value: 'taxi' },
-  { label: 'Boats', value: 'boats' },
-  { label: 'Excursions', value: 'excursions' },
-  { label: 'Rent a Car', value: 'rent-a-car' },
-  { label: 'Accommodations', value: 'accommodations' },
-  { label: 'Shops', value: 'shops' },
-  { label: 'Cretan Groups', value: 'cretan-groups' },
-]
+import { useServiceCategories } from '@/providers/ServiceCategories'
 
 export function HeaderClient() {
   const [isMenuOpen, setIsMenuOpen] = useState(false)
@@ -40,6 +29,10 @@ export function HeaderClient() {
 
   // Check if we're on a services page (hide filters there)
   const isServicesPage = pathname?.startsWith('/services')
+
+  const serviceTypesData = useServiceCategories()
+  const serviceTypes = serviceTypesData.serviceCategories
+  // console.log('serviceTypes', serviceTypes)
 
   // Read URL params on mount or when returning to homepage
   useEffect(() => {

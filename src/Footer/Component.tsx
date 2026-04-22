@@ -20,50 +20,6 @@ export async function Footer() {
             </p>
           </div>
 
-          {/* <div>
-            <h4 className="font-semibold text-[#d4a84b] mb-4 text-sm uppercase tracking-wider">
-              Services
-            </h4>
-            <nav className="flex flex-col gap-2">
-              {[
-                { label: 'Restaurants', href: '/restaurants' },
-                { label: 'Taxi', href: '/taxi' },
-                { label: 'Boats', href: '/boats' },
-                { label: 'Excursions', href: '/excursions' },
-              ].map((link) => (
-                <Link
-                  key={link.href}
-                  href={link.href}
-                  className="text-white/70 hover:text-white text-sm transition-colors"
-                >
-                  {link.label}
-                </Link>
-              ))}
-            </nav>
-          </div>
-
-          <div>
-            <h4 className="font-semibold text-[#d4a84b] mb-4 text-sm uppercase tracking-wider">
-              More
-            </h4>
-            <nav className="flex flex-col gap-2">
-              {[
-                { label: 'Rent a Car', href: '/rent-a-car' },
-                { label: 'Accommodations', href: '/accommodations' },
-                { label: 'Shops', href: '/shops' },
-                { label: 'Cretan Groups', href: '/cretan-groups' },
-              ].map((link) => (
-                <Link
-                  key={link.href}
-                  href={link.href}
-                  className="text-white/70 hover:text-white text-sm transition-colors"
-                >
-                  {link.label}
-                </Link>
-              ))}
-            </nav>
-          </div> */}
-
           {/* Info Column */}
           <div>
             <h4 className="font-semibold text-[#d4a84b] mb-4 text-sm uppercase tracking-wider">

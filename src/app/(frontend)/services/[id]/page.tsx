@@ -91,7 +91,7 @@ export default async function ServicePage({ params }: ServicePageProps) {
         {/* Cover Image */}
         {coverImageUrl && (
           <div className="relative w-full h-[300px] md:h-[400px] rounded-xl overflow-hidden mb-8">
-            <Image src={coverImageUrl} alt={service.name} fill className="object-cover" priority />
+            <Image src={coverImageUrl} alt={service.name} fill className="none" priority />
           </div>
         )}
 

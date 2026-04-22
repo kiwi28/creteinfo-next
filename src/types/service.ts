@@ -20,6 +20,18 @@ export interface Service {
   collectionId: string
 }
 
+export interface ServiceType {
+  collectionId: string
+  id: string
+  coverImage: string
+  label: string
+  slug: string
+  description: string
+  order: number
+  created: string
+  updated: string
+}
+
 export interface ServiceFormData {
   name: string
   category: string[]

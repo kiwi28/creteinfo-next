@@ -2,77 +2,18 @@ import type { Metadata } from 'next'
 import Link from 'next/link'
 import Image from 'next/image'
 import { ArrowRight } from 'lucide-react'
-import { getServices } from '@/lib/services'
+import { getServiceCategories, getServices } from '@/lib/services'
 // import { getServiceCoverUrl } from '@/lib/utils'
-import type { Service } from '@/types/service'
-import { categoryLabels } from '@/types/service'
+import type { Service, ServiceType } from '@/types/service'
 import { ResultsSection } from '@/components/ResultsSection'
 import CopyLinkButton from '@/components/CopyLinkBtn'
+import { getFileUrl } from '@/lib/utils'
 
 export const metadata: Metadata = {
   title: 'Crete Info - Your Gateway to the Island of Crete',
   description:
     'Discover the best restaurants, taxis, boat tours, accommodations, and services in Crete. Your complete guide to exploring this beautiful Greek island.',
 }
-
-const categories = [
-  {
-    id: 'restaurants',
-    title: 'Restaurants',
-    description: 'Discover authentic Greek cuisine and international dining options',
-    image:
-      'https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80',
-  },
-  {
-    id: 'cretan-groups',
-    title: 'Cretan Groups',
-    description: 'Join local groups and communities to experience authentic Crete',
-    image:
-      'https://images.unsplash.com/photo-1519225421980-715cb0215aed?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80',
-  },
-  {
-    id: 'shops',
-    title: 'Shops',
-    description: 'Find local crafts, souvenirs, and shopping experiences',
-    image:
-      'https://images.unsplash.com/photo-1441986300917-64674bd600d8?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80',
-  },
-  {
-    id: 'taxi',
-    title: 'Taxi',
-    description: 'Reliable transportation services across Crete',
-    image:
-      'https://images.unsplash.com/photo-1449824913935-59a10b8d2000?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80',
-  },
-  {
-    id: 'boats',
-    title: 'Boats',
-    description: 'Explore the Mediterranean with boat tours and rentals',
-    image:
-      'https://images.unsplash.com/photo-1544551763-46a013bb70d5?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80',
-  },
-  {
-    id: 'excursions',
-    title: 'Excursions',
-    description: 'Guided tours and adventure experiences in Crete',
-    image:
-      'https://images.unsplash.com/photo-1551632811-561732d1e306?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80',
-  },
-  {
-    id: 'rent-a-car',
-    title: 'Rent a Car',
-    description: 'Freedom to explore Crete at your own pace',
-    image:
-      'https://images.unsplash.com/photo-1449824913935-59a10b8d2000?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80',
-  },
-  {
-    id: 'accommodations',
-    title: 'Accommodations',
-    description: 'Find the perfect place to stay during your Crete adventure',
-    image:
-      'https://images.unsplash.com/photo-1566073771259-6a8506099945?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80',
-  },
-]
 
 interface HomePageProps {
   searchParams: {
@@ -93,21 +34,24 @@ export default async function HomePage({ searchParams }: HomePageProps) {
   // Check if any filters are active
   const hasActiveFilters = Boolean(params.q || params.category || params.location)
 
-  // Fetch services based on filters
+  // Fetch services AND categories in parallel
   let services: Service[] = []
+  let categories: ServiceType[] = []
 
   try {
-    if (hasActiveFilters) {
-      console.log('before loading services')
-      services = await getServices(filter)
-      console.log('after loading services')
-    }
-    // Always fetch featured services for explore section
+    // Fetch both in parallel for better performance
+    const [servicesData, categoriesData] = await Promise.all([
+      hasActiveFilters ? getServices(filter) : Promise.resolve([]),
+      getServiceCategories(), // Fetch from PocketBase
+    ])
+
+    services = servicesData
+    categories = categoriesData
   } catch (error) {
-    console.error('Failed to fetch services:', error)
-  } finally {
-    console.log('finally loaded services')
+    console.error('Failed to fetch data:', error)
   }
+
+  const categoryLabels = categories.map((categ) => categ.label)
 
   return (
     <main className="min-h-screen bg-white">
@@ -172,7 +116,7 @@ export default async function HomePage({ searchParams }: HomePageProps) {
               {services.length > 0 ? (
                 // <div className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6">
                 //   {services.map((service) => (
-                //     <ServiceCard key={service.id} service={service} />
+                //     <ServiceCard key={service.slug} service={service} />
                 //   ))}
                 // </div>
                 <ResultsSection services={services} />
@@ -209,9 +153,10 @@ export default async function HomePage({ searchParams }: HomePageProps) {
       <section className="pb-12 md:pb-16 px-4 md:px-8 bg-[#f8f9fa]">
         <div className="max-w-7xl mx-auto">
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6">
-            {categories.map((category) => (
-              <CategoryCard key={category.id} category={category} />
-            ))}
+            {categories.map((category) => {
+              console.log(category.slug)
+              return <CategoryCard key={category.slug} category={category} />
+            })}
           </div>
         </div>
       </section>
@@ -233,17 +178,18 @@ export default async function HomePage({ searchParams }: HomePageProps) {
   )
 }
 
-function CategoryCard({ category }: { category: (typeof categories)[0] }) {
+function CategoryCard({ category }: { category: ServiceType }) {
+  const serviceImageUrl = getFileUrl(category.collectionId, category.id, category.coverImage)
   return (
     <Link
-      href={`/?category=${category.id}`}
+      href={`/?category=${category.slug}`}
       className="group bg-white rounded-xl overflow-hidden shadow-sm hover:shadow-lg transition-all duration-300 hover:-translate-y-1"
     >
       {/* Image */}
       <div className="relative aspect-[4/3] overflow-hidden bg-[#1a5276]/10">
         <Image
-          src={category.image}
-          alt={category.title}
+          src={serviceImageUrl}
+          alt={category.label}
           fill
           className="object-cover group-hover:scale-105 transition-transform duration-500"
           sizes="(max-width: 768px) 50vw, 25vw"
@@ -253,7 +199,7 @@ function CategoryCard({ category }: { category: (typeof categories)[0] }) {
       {/* Content */}
       <div className="p-3 md:p-4">
         <h3 className="font-semibold text-[#1a5276] text-sm md:text-base mb-1 group-hover:text-[#2980b9] transition-colors line-clamp-1">
-          {category.title}
+          {category.label}
         </h3>
         <p className="text-xs text-[#1a5276]/60 line-clamp-2 mb-2">{category.description}</p>
         <span className="inline-flex items-center gap-1 text-xs font-medium text-[#1a5276] group-hover:text-[#d4a84b] transition-colors">

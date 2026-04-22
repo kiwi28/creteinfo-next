@@ -1,6 +1,6 @@
 import { unstable_cache } from 'next/cache'
 import { pb } from './pocketbase'
-import type { Service, ServiceFilter } from '@/types/service'
+import type { Service, ServiceFilter, ServiceType } from '@/types/service'
 
 export async function getServices(filter: ServiceFilter = {}): Promise<Service[]> {
   const filterParts: string[] = []
@@ -50,6 +50,18 @@ export async function getServices(filter: ServiceFilter = {}): Promise<Service[]
     return result.items as unknown as Service[]
   } catch (error) {
     console.error('Failed to fetch services:', error)
+    return []
+  }
+}
+
+export async function getServiceCategories(): Promise<ServiceType[]> {
+  try {
+    const records = await pb.collection('serviceTypes').getFullList({
+      sort: 'order',
+    })
+    return records as unknown as ServiceType[]
+  } catch (error) {
+    console.error('Failed to fetch service categories:', error)
     return []
   }
 }

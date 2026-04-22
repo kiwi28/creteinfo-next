@@ -2,13 +2,20 @@ import React from 'react'
 
 import { HeaderThemeProvider } from './HeaderTheme'
 import { ThemeProvider } from './Theme'
+import { ServiceCategoriesProvider } from './ServiceCategories'
+import { ServiceType } from '@/types/service'
 
 export const Providers: React.FC<{
   children: React.ReactNode
-}> = ({ children }) => {
+  serviceCategories?: ServiceType[]
+}> = ({ children, serviceCategories }) => {
   return (
     <ThemeProvider>
-      <HeaderThemeProvider>{children}</HeaderThemeProvider>
+      <HeaderThemeProvider>
+        <ServiceCategoriesProvider initialCategories={serviceCategories}>
+          {children}
+        </ServiceCategoriesProvider>
+      </HeaderThemeProvider>
     </ThemeProvider>
   )
 }
