@@ -18,18 +18,18 @@ export async function getServices(
     // Split the query into individual keywords
     const keywords = filter.q.trim().split(/\s+/)
 
-    // For each keyword, search across all fields
+    // For each keyword, search across all fields (use relation field syntax for category)
     const keywordFilters = keywords.map((keyword) => {
-      return `(name ~ "${keyword}" || description ~ "${keyword}" || category ~ "${keyword}" || location ~ "${keyword}")`
+      return `(name ~ "${keyword}" || description ~ "${keyword}" || category.slug ~ "${keyword}" || location ~ "${keyword}")`
     })
 
     // Combine all keyword filters with AND logic
     filterParts.push(`(${keywordFilters.join(' && ')})`)
   }
 
-  // Add category filter
+  // Add category filter - use relation field syntax
   if (filter.category) {
-    filterParts.push(`category ~ "${filter.category}"`)
+    filterParts.push(`category.slug = "${filter.category}"`)
   }
 
   // Add location filter

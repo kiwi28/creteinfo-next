@@ -26,13 +26,14 @@ export async function fetchServices(options?: {
     const keywords = options.query.trim().split(/\s+/)
     const keywordFilters = keywords.map(
       (keyword) =>
-        `(name ~ "${keyword}" || description ~ "${keyword}" || category ~ "${keyword}" || location ~ "${keyword}" || contact ~ "${keyword}" || phone ~ "${keyword}")`,
+        `(name ~ "${keyword}" || description ~ "${keyword}" || category.slug ~ "${keyword}" || location ~ "${keyword}" || contact ~ "${keyword}" || phone ~ "${keyword}")`,
     )
     filterParts.push(`(${keywordFilters.join(' && ')})`)
   }
 
   if (options?.category && options.category !== 'all') {
-    filterParts.push(`category ~ "${options.category}"`)
+    // Filter by relation field - use expanded field syntax
+    filterParts.push(`category.slug = "${options.category}"`)
   }
 
   const filterString = filterParts.length > 0 ? filterParts.join(' && ') : ''
