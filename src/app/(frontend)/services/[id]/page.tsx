@@ -61,29 +61,7 @@ export default async function ServicePage({ params }: ServicePageProps) {
     return null
   }
 
-  let categories: ServiceType[] = []
-
-  try {
-    const [categoriesData] = await Promise.all([
-      getServiceCategories(), // Fetch from PocketBase
-    ])
-
-    categories = categoriesData
-  } catch (error) {
-    console.error('Failed to fetch data:', error)
-  }
-
-  // Create a mapping from slug to label for easy lookup
-  const categoryLabelsMap = categories.reduce(
-    (acc, categ) => {
-      acc[categ.slug] = categ.label
-      return acc
-    },
-    {} as Record<string, string>,
-  )
-
-  const categoryLabel =
-    categoryLabelsMap[service.category?.[0]] || service.category?.[0] || 'Service'
+  const categoryLabel = service?.expand?.category?.map((cat) => cat.label).join(', ') || 'Service'
   console.log('service page - category label', categoryLabel)
   const coverImageUrl = getServiceCoverUrl(service)
   const detailImageUrls = getServiceDetailUrls(service)
@@ -101,7 +79,7 @@ export default async function ServicePage({ params }: ServicePageProps) {
           </Link>
           <span className="mx-2 text-[#1a5276]/40">/</span>
           <Link
-            href={`/?category=${service.category?.[0]}`}
+            href={`/?category=${service?.expand?.category?.[0]}`}
             className="text-sm text-[#1a5276]/60 hover:text-[#1a5276] transition-colors"
           >
             {categoryLabel}
@@ -113,7 +91,7 @@ export default async function ServicePage({ params }: ServicePageProps) {
         {/* Cover Image */}
         {coverImageUrl && (
           <div className="relative w-full h-[300px] md:h-[400px] rounded-xl overflow-hidden mb-8">
-            <Image src={coverImageUrl} alt={service.name} fill className="none" priority />
+            <Image src={coverImageUrl} alt={service.name} fill className="object-none" priority />
           </div>
         )}
 

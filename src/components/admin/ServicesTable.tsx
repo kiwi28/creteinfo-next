@@ -10,11 +10,10 @@ import type { Service, ServiceType } from '@/types/service'
 interface ServicesTableProps {
   services: Service[]
   isLoading: boolean
-  categories: ServiceType[]
   onRowClick: (service: Service) => void
 }
 
-export function ServicesTable({ services, categories, isLoading, onRowClick }: ServicesTableProps) {
+export function ServicesTable({ services, isLoading, onRowClick }: ServicesTableProps) {
   if (isLoading) {
     return (
       <div className="bg-white rounded-xl shadow-sm border p-12 flex items-center justify-center">
@@ -30,14 +29,6 @@ export function ServicesTable({ services, categories, isLoading, onRowClick }: S
       </div>
     )
   }
-
-  const categoryLabels = categories.reduce(
-    (acc, categ) => {
-      acc[categ.slug] = categ.label
-      return acc
-    },
-    {} as Record<string, string>,
-  )
 
   return (
     <div className="bg-white rounded-xl shadow-sm border overflow-hidden">
@@ -58,14 +49,21 @@ export function ServicesTable({ services, categories, isLoading, onRowClick }: S
                 Location
               </th>
               <th className="text-left px-4 py-3 text-xs font-semibold text-[#1a5276]/70 uppercase tracking-wider">
+                # Order (smallest first)
+              </th>
+              <th className="text-left px-4 py-3 text-xs font-semibold text-[#1a5276]/70 uppercase tracking-wider">
                 Updated
+              </th>
+              <th className="text-left px-4 py-3 text-xs font-semibold text-[#1a5276]/70 uppercase tracking-wider">
+                Created
               </th>
             </tr>
           </thead>
           <tbody>
             {services.map((service) => {
+              console.log('table service', service)
               const imageUrl = getServiceCoverUrl(service)
-              const categories = service.category?.map((c) => categoryLabels[c] || c).join(', ')
+              const categories = service.expand.category?.map((cat) => cat.label).join(', ')
               const rawLocations = Array.isArray(service.location)
                 ? service.location
                 : service.location
@@ -108,8 +106,16 @@ export function ServicesTable({ services, categories, isLoading, onRowClick }: S
                     <span className="text-sm text-[#1a5276]/70">{location || '—'}</span>
                   </td>
                   <td className="px-4 py-3">
+                    <span className="text-sm text-[#1a5276]/70">{service.order || '—'}</span>
+                  </td>
+                  <td className="px-4 py-3">
                     <span className="text-xs text-[#1a5276]/50">
                       {new Date(service.updated).toLocaleDateString()}
+                    </span>
+                  </td>
+                  <td className="px-4 py-3">
+                    <span className="text-xs text-[#1a5276]/50">
+                      {new Date(service.created).toLocaleDateString()}
                     </span>
                   </td>
                 </tr>

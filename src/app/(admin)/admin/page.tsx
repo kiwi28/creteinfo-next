@@ -8,7 +8,7 @@ import { DeleteConfirmDialog } from '@/components/admin/DeleteConfirmDialog'
 import { fetchServices } from '@/lib/admin-services'
 import { Plus, Search } from 'lucide-react'
 import type { Service, ServiceType } from '@/types/service'
-import { useServiceCategories } from '@/providers/ServiceCategories'
+// import { useServiceCategories } from '@/providers/ServiceCategories'
 import {
   Select,
   SelectContent,
@@ -16,19 +16,20 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select'
-import { pb } from '@/lib/pocketbase'
+import { getServiceCategories } from '@/lib/services'
+// import { pb } from '@/lib/pocketbase'
 
-export async function getServiceCategories(): Promise<ServiceType[]> {
-  try {
-    const records = await pb.collection('serviceTypes').getFullList({
-      sort: 'order',
-    })
-    return records as unknown as ServiceType[]
-  } catch (error) {
-    console.error('Failed to fetch service categories:', error)
-    return []
-  }
-}
+// export async function getServiceCategories(): Promise<ServiceType[]> {
+//   try {
+//     const records = await pb.collection('serviceTypes').getFullList({
+//       sort: 'order',
+//     })
+//     return records as unknown as ServiceType[]
+//   } catch (error) {
+//     console.error('Failed to fetch service categories:', error)
+//     return []
+//   }
+// }
 
 export default function AdminPage() {
   const { isAuthenticated, isLoading: authLoading } = useAdminAuth()
@@ -47,15 +48,6 @@ export default function AdminPage() {
   // Delete dialog state
   const [deleteTarget, setDeleteTarget] = useState<Service | null>(null)
 
-  // const serviceTypes = serviceTypesData.serviceCategories
-  // const categoryLabels = serviceTypes.reduce(
-  //   (acc, categ) => {
-  //     acc[categ.slug] = categ.label
-  //     return acc
-  //   },
-  //   {} as Record<string, string>,
-  // )
-
   const loadServices = useCallback(async (query?: string, category?: string) => {
     setIsLoading(true)
     try {
@@ -73,7 +65,6 @@ export default function AdminPage() {
       const data = await getServiceCategories()
       setServiceCategories(data)
     } catch {
-      // error handled by toast in caller
     } finally {
       setIsLoading(false)
     }
@@ -209,12 +200,7 @@ export default function AdminPage() {
       </div>
 
       {/* Table */}
-      <ServicesTable
-        services={services}
-        isLoading={isLoading}
-        onRowClick={handleRowClick}
-        categories={serviceCategories}
-      />
+      <ServicesTable services={services} isLoading={isLoading} onRowClick={handleRowClick} />
 
       {/* Service Modal */}
       <ServiceModal

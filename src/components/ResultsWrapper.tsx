@@ -36,18 +36,8 @@ export function ResultsWrapper({ services }: ResultsWrapperProps) {
 // Service Card Component - extracted from page.tsx
 function ServiceCard({ service }: { service: Service }) {
   const imageUrl = getServiceCoverUrl(service) || '/images/placeholder-service.png'
-  const categoryKey = service.category?.[0] || ''
 
-  const serviceTypesData = useServiceCategories()
-  const serviceTypes = serviceTypesData.serviceCategories
-  const categoryLabelsMap = serviceTypes.reduce(
-    (acc, categ) => {
-      acc[categ.slug] = categ.label
-      return acc
-    },
-    {} as Record<string, string>,
-  )
-  const categoryLabel = categoryLabelsMap[categoryKey] || categoryKey
+  const categoryLabel = service?.expand?.category?.map((cat) => cat.label).join(', ') || 'Service'
 
   return (
     <Link

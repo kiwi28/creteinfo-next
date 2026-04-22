@@ -2,7 +2,10 @@ import { unstable_cache } from 'next/cache'
 import { pb } from './pocketbase'
 import type { Service, ServiceFilter, ServiceType } from '@/types/service'
 
-export async function getServices(filter: ServiceFilter = {}): Promise<Service[]> {
+export async function getServices(
+  filter: ServiceFilter = {},
+  sort: string = '-created',
+): Promise<Service[]> {
   const filterParts: string[] = []
 
   // Add search query filter (searches in name and description)
@@ -42,9 +45,10 @@ export async function getServices(filter: ServiceFilter = {}): Promise<Service[]
   const filterString = filterParts.length > 0 ? filterParts.join(' && ') : ''
 
   try {
-    const result = await pb.collection('services').getList(1, 500, {
+    const result = await pb.collection('services').getList(1, 1000, {
       filter: filterString,
-      sort: '-created',
+      sort: sort,
+      expand: 'category',
     })
 
     return result.items as unknown as Service[]
@@ -68,7 +72,9 @@ export async function getServiceCategories(): Promise<ServiceType[]> {
 
 export async function getServiceById(id: string): Promise<Service | null> {
   try {
-    const record = await pb.collection('services').getOne(id)
+    const record = await pb.collection('services').getOne(id, { expand: 'category' })
+    console.log('record------------->', record)
+    console.log('record expanded------------->', record?.expand)
     return record as unknown as Service
   } catch (error) {
     console.error('Failed to fetch service:', error)

@@ -17,7 +17,9 @@ export interface Service {
   updated: string
   featured: boolean
   var: string
+  order: number
   collectionId: string
+  expand: { category: ServiceType[] }
 }
 
 export interface ServiceType {
@@ -39,6 +41,7 @@ export interface ServiceFormData {
   contact: string
   phone: string
   email: string
+  order: number
   website: string
   airbnb: string
   description: string

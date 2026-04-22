@@ -15,7 +15,11 @@ async function triggerRevalidation(serviceId?: string) {
   }
 }
 
-export async function fetchServices(options?: { query?: string; category?: string }): Promise<Service[]> {
+export async function fetchServices(options?: {
+  query?: string
+  category?: string
+  sort?: string
+}): Promise<Service[]> {
   const filterParts: string[] = []
 
   if (options?.query?.trim()) {
@@ -34,14 +38,15 @@ export async function fetchServices(options?: { query?: string; category?: strin
   const filterString = filterParts.length > 0 ? filterParts.join(' && ') : ''
 
   const records = await pb.collection('services').getFullList({
-    sort: '-updated',
+    sort: options?.sort || '-updated',
     filter: filterString,
+    expand: 'category',
   })
   return records as unknown as Service[]
 }
 
 export async function fetchServiceById(id: string): Promise<Service> {
-  const record = await pb.collection('services').getOne(id)
+  const record = await pb.collection('services').getOne(id, { expand: 'category' })
   return record as unknown as Service
 }
 
@@ -49,7 +54,11 @@ function appendBaseFields(formData: FormData, data: ServiceFormData) {
   formData.append('name', data.name)
   formData.append('category', JSON.stringify(data.category || []))
 
-  const locationArr = Array.isArray(data.location) ? data.location : data.location ? [data.location] : []
+  const locationArr = Array.isArray(data.location)
+    ? data.location
+    : data.location
+      ? [data.location]
+      : []
   formData.append('location', JSON.stringify(locationArr))
 
   formData.append('contact', data.contact || '')
