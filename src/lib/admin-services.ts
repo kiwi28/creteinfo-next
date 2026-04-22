@@ -37,7 +37,7 @@ export async function fetchServices(options?: {
   }
 
   const filterString = filterParts.length > 0 ? filterParts.join(' && ') : ''
-  console.log('options----', options)
+  // console.log('options----', options)
   const records = await pb.collection('services').getFullList({
     sort: options?.sort || '-updated',
     filter: filterString,

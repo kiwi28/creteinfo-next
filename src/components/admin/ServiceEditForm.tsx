@@ -54,17 +54,13 @@ export function ServiceEditForm({ service, onSave, onCancel }: ServiceEditFormPr
   const selectedLocations = normalizeLocation(watch('location'))
 
   const toggleCategory = (categoryId: string) => {
-    console.log('toggleCategory called with:', categoryId)
-    console.log('Current selectedCategoryIds:', selectedCategoryIds)
     const current = selectedCategoryIds
     if (current.includes(categoryId)) {
-      console.log('Removing category:', categoryId)
       setValue(
         'category',
         current.filter((c) => c !== categoryId),
       )
     } else {
-      console.log('Adding category:', categoryId)
       setValue('category', [...current, categoryId])
     }
   }
@@ -141,7 +137,7 @@ export function ServiceEditForm({ service, onSave, onCancel }: ServiceEditFormPr
       {/* Category */}
       <div>
         <label className="block text-xs font-semibold text-[#1a5276]/60 uppercase tracking-wider mb-1">
-          Category (max 2)
+          Category
         </label>
         {serviceTypesData.isLoading ? (
           <div className="text-sm text-[#1a5276]/50">Loading categories...</div>
@@ -153,15 +149,11 @@ export function ServiceEditForm({ service, onSave, onCancel }: ServiceEditFormPr
           <div className="flex flex-wrap gap-2">
             {serviceTypes.map((category) => {
               const isSelected = selectedCategoryIds.includes(category.id)
-              console.log(`Category ${category.label} (${category.id}): selected = ${isSelected}`)
               return (
                 <button
                   key={category.id}
                   type="button"
-                  onClick={() => {
-                    console.log(`Button clicked for ${category.label} (${category.id})`)
-                    toggleCategory(category.id)
-                  }}
+                  onClick={() => toggleCategory(category.id)}
                   className={`px-3 py-1.5 rounded-full text-sm font-medium transition-all ${
                     isSelected
                       ? 'bg-[#1a5276] text-white'

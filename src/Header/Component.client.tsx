@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect, useCallback, useRef } from 'react'
 import Link from 'next/link'
+import Image from 'next/image'
 import { usePathname, useRouter, useSearchParams } from 'next/navigation'
 import { X, Search, MapPin } from 'lucide-react'
 import { locationsMap } from '@/types/service'
@@ -135,8 +136,15 @@ export function HeaderClient() {
             {/* Brand - Offset Left */}
             <Link href="/" className="group flex items-center gap-3 z-10 shrink-0">
               <div className="relative">
-                <div className="w-10 h-10 md:w-12 md:h-12 rounded-full bg-gradient-to-br from-[#1a5276] to-[#2980b9] flex items-center justify-center shadow-lg group-hover:shadow-xl transition-shadow duration-300">
-                  <span className="text-white font-display text-lg md:text-xl font-bold">C</span>
+                <div className="w-10 h-10 md:w-12 md:h-12 rounded-full overflow-hidden bg-gradient-to-br from-[#1a5276] to-[#2980b9] flex items-center justify-center shadow-lg group-hover:shadow-xl transition-shadow duration-300">
+                  <Image
+                    src="/logo.png"
+                    alt="Crete Info"
+                    width={48}
+                    height={48}
+                    className="w-full h-full object-cover"
+                    priority
+                  />
                 </div>
                 <div className="absolute -bottom-1 -right-1 w-4 h-4 bg-[#d4a84b] rounded-full opacity-80 group-hover:opacity-100 transition-opacity" />
               </div>

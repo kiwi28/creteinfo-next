@@ -73,8 +73,6 @@ export async function getServiceCategories(): Promise<ServiceType[]> {
 export async function getServiceById(id: string): Promise<Service | null> {
   try {
     const record = await pb.collection('services').getOne(id, { expand: 'category' })
-    console.log('record------------->', record)
-    console.log('record expanded------------->', record?.expand)
     return record as unknown as Service
   } catch (error) {
     console.error('Failed to fetch service:', error)

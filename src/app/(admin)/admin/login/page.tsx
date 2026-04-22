@@ -1,6 +1,7 @@
 'use client'
 
 import React, { useState } from 'react'
+import Image from 'next/image'
 import { useAdminAuth } from '@/components/admin/AdminAuthContext'
 import { Loader2 } from 'lucide-react'
 import { toast } from 'sonner'
@@ -41,8 +42,15 @@ export default function AdminLoginPage() {
     <div className="min-h-screen bg-gray-50 flex items-center justify-center p-4">
       <div className="w-full max-w-sm">
         <div className="text-center mb-8">
-          <div className="w-16 h-16 rounded-full bg-gradient-to-br from-[#1a5276] to-[#2980b9] flex items-center justify-center mx-auto mb-4 shadow-lg">
-            <span className="text-white font-bold text-2xl">C</span>
+          <div className="w-16 h-16 rounded-full overflow-hidden bg-gradient-to-br from-[#1a5276] to-[#2980b9] flex items-center justify-center mx-auto mb-4 shadow-lg">
+            <Image
+              src="/logo.png"
+              alt="Crete Info"
+              width={64}
+              height={64}
+              className="w-full h-full object-cover"
+              priority
+            />
           </div>
           <h1 className="text-2xl font-bold text-[#1a5276]">Crete Info Admin</h1>
           <p className="text-[#1a5276]/60 mt-1">Sign in to manage services</p>

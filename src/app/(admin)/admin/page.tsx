@@ -6,7 +6,7 @@ import { ServicesTable } from '@/components/admin/ServicesTable'
 import { ServiceModal } from '@/components/admin/ServiceModal'
 import { DeleteConfirmDialog } from '@/components/admin/DeleteConfirmDialog'
 import { fetchServices } from '@/lib/admin-services'
-import { Plus, Search } from 'lucide-react'
+import { Plus, Search, X } from 'lucide-react'
 import type { Service, ServiceType } from '@/types/service'
 // import { useServiceCategories } from '@/providers/ServiceCategories'
 import {
@@ -27,6 +27,15 @@ export default function AdminPage() {
   const [searchQuery, setSearchQuery] = useState('')
   const [selectedCategory, setSelectedCategory] = useState<string>('all')
 
+  // Sort state: { field: string | null, direction: 'asc' | 'desc' | null }
+  const [sortConfig, setSortConfig] = useState<{
+    field: string | null
+    direction: 'asc' | 'desc' | null
+  }>({
+    field: null,
+    direction: null,
+  })
+
   // Modal state
   const [selectedService, setSelectedService] = useState<Service | null>(null)
   const [isModalOpen, setIsModalOpen] = useState(false)
@@ -35,7 +44,7 @@ export default function AdminPage() {
   // Delete dialog state
   const [deleteTarget, setDeleteTarget] = useState<Service | null>(null)
 
-  const loadServices = useCallback(async (query?: string, category?: string, sort = '-order') => {
+  const loadServices = useCallback(async (query?: string, category?: string, sort?: string) => {
     setIsLoading(true)
     try {
       const data = await fetchServices({ query, category, sort })
@@ -59,10 +68,50 @@ export default function AdminPage() {
 
   useEffect(() => {
     if (isAuthenticated) {
-      loadServices(searchQuery || undefined, selectedCategory, '-order')
+      // Build sort string from config
+      let sortString = '-order' // default
+      if (sortConfig.field && sortConfig.direction) {
+        sortString = `${sortConfig.direction === 'desc' ? '-' : ''}${sortConfig.field}`
+      }
+      loadServices(searchQuery || undefined, selectedCategory, sortString)
       loadServiceCategories()
     }
-  }, [isAuthenticated, searchQuery, selectedCategory, loadServices])
+  }, [isAuthenticated, searchQuery, selectedCategory, sortConfig, loadServices])
+
+  const getSortString = () => {
+    if (sortConfig.field && sortConfig.direction) {
+      return `${sortConfig.direction === 'desc' ? '-' : ''}${sortConfig.field}`
+    }
+    return '-order'
+  }
+
+  const handleSort = (field: string) => {
+    setSortConfig((current) => {
+      if (current.field !== field) {
+        // New field - start with ascending
+        return { field, direction: 'asc' }
+      }
+      if (current.direction === 'asc') {
+        // Same field, was ascending - switch to descending
+        return { field, direction: 'desc' }
+      }
+      if (current.direction === 'desc') {
+        // Same field, was descending - clear sort
+        return { field: null, direction: null }
+      }
+      // Was null - start with ascending
+      return { field, direction: 'asc' }
+    })
+  }
+
+  const handleClearAll = () => {
+    setSearchInput('')
+    setSearchQuery('')
+    setSelectedCategory('all')
+    setSortConfig({ field: null, direction: null })
+  }
+
+  const hasActiveFilters = searchQuery || selectedCategory !== 'all' || sortConfig.field
 
   if (authLoading || !isAuthenticated) return null
 
@@ -93,7 +142,8 @@ export default function AdminPage() {
     try {
       await deleteService(deleteTarget.id)
       toast.success('Service deleted successfully')
-      await loadServices(searchQuery || undefined, selectedCategory)
+      const sortString = getSortString()
+      await loadServices(searchQuery || undefined, selectedCategory, sortString)
       setIsModalOpen(false)
       setSelectedService(null)
     } catch {
@@ -103,7 +153,8 @@ export default function AdminPage() {
   }
 
   const handleSave = async () => {
-    await loadServices(searchQuery || undefined, selectedCategory)
+    const sortString = getSortString()
+    await loadServices(searchQuery || undefined, selectedCategory, sortString)
     setIsModalOpen(false)
     setSelectedService(null)
   }
@@ -120,14 +171,14 @@ export default function AdminPage() {
   const handleSearch = () => {
     const q = searchInput.trim()
     setSearchQuery(q)
-    loadServices(q || undefined, selectedCategory)
+    const sortString = getSortString()
+    loadServices(q || undefined, selectedCategory, sortString)
   }
 
   const handleSearchKeyDown = (e: React.KeyboardEvent) => {
     if (e.key === 'Enter') handleSearch()
   }
 
-  // console.log('serviceTypes', serviceTypes)
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 py-6">
       {/* Toolbar */}
@@ -138,26 +189,38 @@ export default function AdminPage() {
             {searchQuery ? `${services.length} results` : `${services.length} total records`}
           </p>
         </div>
-        {/* Category Filter */}
-        <div className="w-48">
-          <Select value={selectedCategory} onValueChange={setSelectedCategory}>
-            <SelectTrigger className="w-full">
-              <SelectValue placeholder="Filter by category" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="all">All Categories</SelectItem>
-              {serviceCategories.map((category) => {
-                // console.log(category)
-                return (
-                  <SelectItem key={category.id} value={category.slug}>
-                    {category.label}
-                  </SelectItem>
-                )
-              })}
-            </SelectContent>
-          </Select>
-        </div>
-        <div className="flex items-center gap-3 w-full sm:w-auto">
+        <div className="flex items-center gap-3 w-full sm:w-auto flex-wrap">
+          {/* Clear All Filters Button */}
+          {hasActiveFilters && (
+            <button
+              onClick={handleClearAll}
+              className="shrink-0 px-4 py-2 border border-[#1a5276]/20 text-[#1a5276] rounded-lg hover:bg-[#1a5276]/5 transition-colors text-sm font-medium flex items-center gap-2"
+            >
+              <X className="w-4 h-4" />
+              <span className="hidden sm:inline">Clear All</span>
+            </button>
+          )}
+
+          {/* Category Filter */}
+          <div className="w-48">
+            <Select value={selectedCategory} onValueChange={setSelectedCategory}>
+              <SelectTrigger className="w-full">
+                <SelectValue placeholder="Filter by category" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">All Categories</SelectItem>
+                {serviceCategories.map((category) => {
+                  return (
+                    <SelectItem key={category.id} value={category.slug}>
+                      {category.label}
+                    </SelectItem>
+                  )
+                })}
+              </SelectContent>
+            </Select>
+          </div>
+
+          {/* Search */}
           <div className="relative flex-1 sm:flex-initial">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[#1a5276]/40" />
             <input
@@ -187,7 +250,13 @@ export default function AdminPage() {
       </div>
 
       {/* Table */}
-      <ServicesTable services={services} isLoading={isLoading} onRowClick={handleRowClick} />
+      <ServicesTable
+        services={services}
+        isLoading={isLoading}
+        onRowClick={handleRowClick}
+        sortConfig={sortConfig}
+        onSort={handleSort}
+      />
 
       {/* Service Modal */}
       <ServiceModal
