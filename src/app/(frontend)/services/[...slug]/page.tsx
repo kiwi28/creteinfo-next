@@ -5,7 +5,7 @@ import Image from 'next/image'
 import React from 'react'
 import { ArrowLeft, MapPin, Phone, Mail, Globe, MessageCircle } from 'lucide-react'
 import { getServiceById, getServices } from '@/lib/services'
-import { getServiceCoverUrl, getServiceDetailUrls } from '@/lib/utils'
+import { getServiceCoverUrl, getServiceDetailUrls, slugify } from '@/lib/utils'
 import { locationsMap } from '@/types/service'
 
 // Revalidate service detail pages every 5 minutes as a safety net
@@ -15,19 +15,23 @@ import { ImageGallery } from '@/components/ImageGallery'
 
 interface ServicePageProps {
   params: Promise<{
-    id: string
+    slug: string[]
   }>
 }
 
 export async function generateStaticParams() {
   const services = await getServices({}, '-order')
-  return services.map((service) => ({
-    id: service.id,
-  }))
+  return services.map((service) => {
+    const slug = slugify(service.name)
+    return {
+      slug: [service.id, slug],
+    }
+  })
 }
 
 export async function generateMetadata({ params }: ServicePageProps): Promise<Metadata> {
-  const { id } = await params
+  const { slug } = await params
+  const id = slug[0] // First segment is always the ID
   const service = await getServiceById(id)
 
   if (!service) {
@@ -51,10 +55,11 @@ export async function generateMetadata({ params }: ServicePageProps): Promise<Me
 }
 
 export default async function ServicePage({ params }: ServicePageProps) {
-  const { id } = await params
+  const { slug } = await params
+  const id = slug[0] // First segment is always the ID
   const service = await getServiceById(id)
 
-  console.log('----> service page:', id, service)
+  console.log('----> service page:', id, slug, service)
 
   if (!service) {
     notFound()

@@ -5,7 +5,7 @@ import Link from 'next/link'
 import Image from 'next/image'
 import { MapPin, Star } from 'lucide-react'
 import { locationsMap } from '@/types/service'
-import { getServiceCoverUrl } from '@/lib/utils'
+import { getServiceCoverUrl, getServicePath } from '@/lib/utils'
 import { useServiceCategories } from '@/providers/ServiceCategories'
 
 interface ResultsWrapperProps {
@@ -41,7 +41,7 @@ function ServiceCard({ service }: { service: Service }) {
 
   return (
     <Link
-      href={`/services/${service.id}`}
+      href={getServicePath(service.id, service.name)}
       className="group bg-white rounded-xl overflow-hidden shadow-sm hover:shadow-lg transition-all duration-300 hover:-translate-y-1"
     >
       {/* Image */}

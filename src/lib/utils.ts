@@ -51,3 +51,15 @@ export function slugify(text: string): string {
     .replace(/--+/g, '-')
     .trim()
 }
+
+/**
+ * Generate service URL path with ID and slug
+ * @param id - Service ID
+ * @param name - Service name for slug generation
+ * @returns URL path like /services/id/slug
+ */
+export function getServicePath(id: string, name?: string | null): string {
+  if (!name) return `/services/${id}`
+  const slug = slugify(name)
+  return `/services/${id}/${slug}`
+}
