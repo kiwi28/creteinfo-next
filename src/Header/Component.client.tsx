@@ -218,12 +218,12 @@ export function HeaderClient() {
             <div className="flex flex-wrap gap-2">
               {serviceTypes.map((type) => (
                 <button
-                  key={type.slug}
+                  key={type.id}
                   onClick={() => {
-                    setSelectedCategory(selectedCategory === type.slug ? null : type.slug)
+                    setSelectedCategory(selectedCategory === type.id ? null : type.id)
                   }}
                   className={`px-3 py-1.5 rounded-full text-sm font-medium transition-all ${
-                    selectedCategory === type.slug
+                    selectedCategory === type.id
                       ? 'bg-[#1a5276] text-white'
                       : 'bg-[#1a5276]/10 text-[#1a5276] hover:bg-[#1a5276]/20'
                   }`}
@@ -320,12 +320,12 @@ export function HeaderClient() {
               <div className="flex flex-wrap gap-2">
                 {serviceTypes.map((type) => (
                   <button
-                    key={type.slug}
+                    key={type.id}
                     onClick={() =>
-                      setSelectedCategory(selectedCategory === type.slug ? null : type.slug)
+                      setSelectedCategory(selectedCategory === type.id ? null : type.id)
                     }
                     className={`px-3 py-1.5 rounded-full text-sm font-medium transition-all ${
-                      selectedCategory === type.slug
+                      selectedCategory === type.id
                         ? 'bg-[#1a5276] text-white'
                         : 'bg-[#1a5276]/10 text-[#1a5276] hover:bg-[#1a5276]/20'
                     }`}

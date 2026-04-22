@@ -211,7 +211,7 @@ export default function AdminPage() {
                 <SelectItem value="all">All Categories</SelectItem>
                 {serviceCategories.map((category) => {
                   return (
-                    <SelectItem key={category.id} value={category.slug}>
+                    <SelectItem key={category.id} value={category.id}>
                       {category.label}
                     </SelectItem>
                   )

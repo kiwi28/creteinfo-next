@@ -60,6 +60,15 @@ export default async function HomePage({ searchParams }: HomePageProps) {
     {} as Record<string, string>,
   )
 
+  // Create a mapping from ID to label for category filter display
+  const categoryLabelsByIdMap = categories.reduce(
+    (acc, categ) => {
+      acc[categ.id] = categ.label
+      return acc
+    },
+    {} as Record<string, string>,
+  )
+
   return (
     <main className="min-h-screen bg-white">
       {/* Hero Section - Only show when no filters are active */}
@@ -112,7 +121,7 @@ export default async function HomePage({ searchParams }: HomePageProps) {
                   <p className="text-[#1a5276]/60 mt-1">
                     {params.q && `Search: "${params.q}"`}
                     {params.category &&
-                      `${params.q ? ' • ' : ''}${categoryLabelsMap[params.category] || params.category}`}
+                      `${params.q ? ' • ' : ''}${categoryLabelsByIdMap[params.category] || params.category}`}
                     {params.location &&
                       `${params.q || params.category ? ' • ' : ''}${params.location.charAt(0).toUpperCase() + params.location.slice(1).replace(/-/g, ' ')}`}
                   </p>
@@ -188,7 +197,7 @@ function CategoryCard({ category }: { category: ServiceType }) {
   const serviceImageUrl = getFileUrl(category.collectionId, category.id, category.coverImage)
   return (
     <Link
-      href={`/?category=${category.slug}`}
+      href={`/?category=${category.id}`}
       className="group bg-white rounded-xl overflow-hidden shadow-sm hover:shadow-lg transition-all duration-300 hover:-translate-y-1"
     >
       {/* Image */}

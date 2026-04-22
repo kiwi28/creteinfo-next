@@ -27,9 +27,9 @@ export async function getServices(
     filterParts.push(`(${keywordFilters.join(' && ')})`)
   }
 
-  // Add category filter - use relation field syntax
+  // Add category filter - use ID (works with multi-category arrays)
   if (filter.category) {
-    filterParts.push(`category.slug = "${filter.category}"`)
+    filterParts.push(`category ~ "${filter.category}"`)
   }
 
   // Add location filter
