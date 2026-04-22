@@ -42,7 +42,7 @@ export default async function HomePage({ searchParams }: HomePageProps) {
   try {
     // Fetch both in parallel for better performance
     const [servicesData, categoriesData] = await Promise.all([
-      hasActiveFilters ? getServices(filter, '-order') : Promise.resolve([]),
+      hasActiveFilters ? getServices(filter) : Promise.resolve([]),
       getServiceCategories(), // Fetch from PocketBase
     ])
 
