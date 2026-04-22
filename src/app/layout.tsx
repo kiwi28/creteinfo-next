@@ -7,6 +7,9 @@ import React from 'react'
 
 import { mergeOpenGraph } from '@/utilities/mergeOpenGraph'
 import { getServerSideURL } from '@/utilities/getURL'
+import { ServiceCategoriesProvider } from '@/providers/ServiceCategories'
+import { getServiceCategories } from '@/lib/services'
+import type { ServiceType } from '@/types/service'
 
 import { Playfair_Display, DM_Sans } from 'next/font/google'
 
@@ -25,6 +28,9 @@ const dmSans = DM_Sans({
 })
 
 export default async function RootLayout({ children }: { children: React.ReactNode }) {
+  // Fetch service categories server-side for all routes
+  const serviceCategories = await getServiceCategories()
+
   return (
     <html
       className={cn(GeistSans.variable, GeistMono.variable, playfair.variable, dmSans.variable)}
@@ -36,7 +42,11 @@ export default async function RootLayout({ children }: { children: React.ReactNo
         <link href="/favicon.ico" rel="icon" sizes="32x32" />
         <link href="/favicon.svg" rel="icon" type="image/svg+xml" />
       </head>
-      <body>{children}</body>
+      <body>
+        <ServiceCategoriesProvider initialCategories={serviceCategories}>
+          {children}
+        </ServiceCategoriesProvider>
+      </body>
     </html>
   )
 }

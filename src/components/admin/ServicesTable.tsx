@@ -49,7 +49,7 @@ export function ServicesTable({ services, isLoading, onRowClick }: ServicesTable
                 Location
               </th>
               <th className="text-left px-4 py-3 text-xs font-semibold text-[#1a5276]/70 uppercase tracking-wider">
-                # Order (smallest first)
+                # Order (biggest first)
               </th>
               <th className="text-left px-4 py-3 text-xs font-semibold text-[#1a5276]/70 uppercase tracking-wider">
                 Updated
@@ -61,7 +61,6 @@ export function ServicesTable({ services, isLoading, onRowClick }: ServicesTable
           </thead>
           <tbody>
             {services.map((service) => {
-              console.log('table service', service)
               const imageUrl = getServiceCoverUrl(service)
               const categories = service.expand.category?.map((cat) => cat.label).join(', ')
               const rawLocations = Array.isArray(service.location)

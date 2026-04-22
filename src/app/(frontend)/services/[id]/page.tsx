@@ -4,9 +4,9 @@ import Link from 'next/link'
 import Image from 'next/image'
 import React from 'react'
 import { ArrowLeft, MapPin, Phone, Mail, Globe, MessageCircle } from 'lucide-react'
-import { getServiceById, getServiceCategories, getServices } from '@/lib/services'
+import { getServiceById, getServices } from '@/lib/services'
 import { getServiceCoverUrl, getServiceDetailUrls } from '@/lib/utils'
-import { locationsMap, ServiceType } from '@/types/service'
+import { locationsMap } from '@/types/service'
 
 // Revalidate service detail pages every 5 minutes as a safety net
 export const revalidate = 300
@@ -20,7 +20,7 @@ interface ServicePageProps {
 }
 
 export async function generateStaticParams() {
-  const services = await getServices({})
+  const services = await getServices({}, '-order')
   return services.map((service) => ({
     id: service.id,
   }))

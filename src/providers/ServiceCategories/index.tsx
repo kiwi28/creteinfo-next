@@ -46,6 +46,13 @@ export const ServiceCategoriesProvider = ({
     }
   }
 
+  // Auto-load categories on mount if no initial categories provided
+  useEffect(() => {
+    if (initialCategories.length === 0) {
+      loadCategories()
+    }
+  }, [])
+
   return (
     <ServiceCategoriesContext
       value={{

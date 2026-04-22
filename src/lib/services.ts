@@ -61,7 +61,7 @@ export async function getServices(
 export async function getServiceCategories(): Promise<ServiceType[]> {
   try {
     const records = await pb.collection('serviceTypes').getFullList({
-      sort: 'order',
+      sort: '-order',
     })
     return records as unknown as ServiceType[]
   } catch (error) {
@@ -83,12 +83,12 @@ export async function getServiceById(id: string): Promise<Service | null> {
 }
 
 export async function getServicesByCategory(category: string): Promise<Service[]> {
-  return getServices({ category })
+  return getServices({ category }, '-order')
 }
 
-export async function getFeaturedServices(): Promise<Service[]> {
-  return getServices({ featuredExplore: true })
-}
+// export async function getFeaturedServices(): Promise<Service[]> {
+//   return getServices({ featuredExplore: true })
+// }
 
 /**
  * Returns a cached version of getServices

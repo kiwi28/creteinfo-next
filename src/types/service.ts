@@ -70,17 +70,11 @@ export const categoryLabels: Record<string, string> = {
 }
 
 export const locationsMap = {
-  heraklion: 'Heraklion',
-  chania: 'Chania',
-  rethymno: 'Rethymno',
-  'agios-nikolaos': 'Agios Nikolaos',
-  elounda: 'Elounda',
-  'agia-pelagia': 'Agia Pelagia',
-  malia: 'Malia',
-  hersonissos: 'Hersonissos',
-  sougia: 'Sougia',
-  kissamos: 'Kissamos',
   crete: 'Crete',
-  'south-crete': 'South Crete',
-  balos: 'Balos',
+  'agios-nikolaos': 'Agios Nikolaos',
+  chania: 'Chania',
+  heraklion: 'Heraklion',
+  hersonissos: 'Hersonissos',
+  rethymno: 'Rethymno',
+  sitia: 'Sitia',
 }

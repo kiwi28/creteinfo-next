@@ -6,7 +6,6 @@ import { Pencil, Trash2, ExternalLink, Phone, Mail, MapPin } from 'lucide-react'
 import { locationsMap } from '@/types/service'
 import { getServiceCoverUrl, getServiceDetailUrls } from '@/lib/utils'
 import type { Service } from '@/types/service'
-import { useServiceCategories } from '@/providers/ServiceCategories'
 
 interface ServiceViewModeProps {
   service: Service
@@ -17,16 +16,6 @@ interface ServiceViewModeProps {
 export function ServiceViewMode({ service, onEdit, onDelete }: ServiceViewModeProps) {
   const coverUrl = getServiceCoverUrl(service)
   const detailUrls = getServiceDetailUrls(service)
-
-  const serviceTypesData = useServiceCategories()
-  const serviceTypes = serviceTypesData.serviceCategories
-  const categoryLabels = serviceTypes.reduce(
-    (acc, categ) => {
-      acc[categ.slug] = categ.label
-      return acc
-    },
-    {} as Record<string, string>,
-  )
 
   return (
     <div className="space-y-6">
@@ -75,14 +64,17 @@ export function ServiceViewMode({ service, onEdit, onDelete }: ServiceViewModePr
             Category
           </label>
           <div className="flex flex-wrap gap-1 mt-0.5">
-            {service.category?.map((c) => (
+            {service.expand?.category?.map((c) => (
               <span
-                key={c}
+                key={c.id}
                 className="px-2 py-0.5 rounded-full text-xs font-medium bg-[#1a5276]/10 text-[#1a5276]"
               >
-                {categoryLabels[c] || c}
+                {c.label}
               </span>
             ))}
+            {!service.expand?.category || service.expand.category.length === 0 ? (
+              <span className="text-sm text-[#1a5276]/50">—</span>
+            ) : null}
           </div>
         </div>
         <div>

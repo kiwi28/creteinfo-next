@@ -37,7 +37,7 @@ export async function fetchServices(options?: {
   }
 
   const filterString = filterParts.length > 0 ? filterParts.join(' && ') : ''
-
+  console.log('options----', options)
   const records = await pb.collection('services').getFullList({
     sort: options?.sort || '-updated',
     filter: filterString,
@@ -53,6 +53,8 @@ export async function fetchServiceById(id: string): Promise<Service> {
 
 function appendBaseFields(formData: FormData, data: ServiceFormData) {
   formData.append('name', data.name)
+
+  // Category is now a relation field - send as JSON array of IDs
   formData.append('category', JSON.stringify(data.category || []))
 
   const locationArr = Array.isArray(data.location)
@@ -68,6 +70,7 @@ function appendBaseFields(formData: FormData, data: ServiceFormData) {
   formData.append('website', data.website || '')
   formData.append('airbnb', data.airbnb || '')
   formData.append('description', data.description || '')
+  formData.append('order', String(data.order || 0))
 }
 
 export async function createService(data: ServiceFormData): Promise<Service> {

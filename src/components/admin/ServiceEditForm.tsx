@@ -31,10 +31,13 @@ export function ServiceEditForm({ service, onSave, onCancel }: ServiceEditFormPr
     return []
   }
 
+  // Get expanded categories (relation IDs)
+  const expandedCategories = service?.expand?.category || []
+
   const { register, handleSubmit, setValue, watch } = useForm<ServiceFormData>({
     defaultValues: {
       name: service?.name || '',
-      category: service?.category || [],
+      category: expandedCategories.map((c) => c.id) || [],
       location: normalizeLocation(service?.location),
       contact: service?.contact || '',
       phone: service?.phone || '',
@@ -42,22 +45,27 @@ export function ServiceEditForm({ service, onSave, onCancel }: ServiceEditFormPr
       website: service?.website || '',
       airbnb: service?.airbnb || '',
       description: service?.description || '',
+      order: service?.order || 0,
     },
   })
 
   const description = watch('description')
-  const selectedCategories = watch('category') || []
+  const selectedCategoryIds = watch('category') || []
   const selectedLocations = normalizeLocation(watch('location'))
 
-  const toggleCategory = (value: string) => {
-    const current = selectedCategories
-    if (current.includes(value)) {
+  const toggleCategory = (categoryId: string) => {
+    console.log('toggleCategory called with:', categoryId)
+    console.log('Current selectedCategoryIds:', selectedCategoryIds)
+    const current = selectedCategoryIds
+    if (current.includes(categoryId)) {
+      console.log('Removing category:', categoryId)
       setValue(
         'category',
-        current.filter((c) => c !== value),
+        current.filter((c) => c !== categoryId),
       )
-    } else if (current.length < 2) {
-      setValue('category', [...current, value])
+    } else {
+      console.log('Adding category:', categoryId)
+      setValue('category', [...current, categoryId])
     }
   }
 
@@ -115,13 +123,6 @@ export function ServiceEditForm({ service, onSave, onCancel }: ServiceEditFormPr
 
   const serviceTypesData = useServiceCategories()
   const serviceTypes = serviceTypesData.serviceCategories
-  const categoryLabels = serviceTypes.reduce(
-    (acc, categ) => {
-      acc[categ.slug] = categ.label
-      return acc
-    },
-    {} as Record<string, string>,
-  )
 
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
@@ -142,22 +143,51 @@ export function ServiceEditForm({ service, onSave, onCancel }: ServiceEditFormPr
         <label className="block text-xs font-semibold text-[#1a5276]/60 uppercase tracking-wider mb-1">
           Category (max 2)
         </label>
-        <div className="flex flex-wrap gap-2">
-          {Object.entries(categoryLabels).map(([value, label]) => (
-            <button
-              key={value}
-              type="button"
-              onClick={() => toggleCategory(value)}
-              className={`px-3 py-1.5 rounded-full text-sm font-medium transition-all ${
-                selectedCategories.includes(value)
-                  ? 'bg-[#1a5276] text-white'
-                  : 'bg-[#1a5276]/10 text-[#1a5276] hover:bg-[#1a5276]/20'
-              }`}
-            >
-              {label}
-            </button>
-          ))}
-        </div>
+        {serviceTypesData.isLoading ? (
+          <div className="text-sm text-[#1a5276]/50">Loading categories...</div>
+        ) : serviceTypesData.error ? (
+          <div className="text-sm text-red-500">Error loading categories</div>
+        ) : serviceTypes.length === 0 ? (
+          <div className="text-sm text-[#1a5276]/50">No categories available</div>
+        ) : (
+          <div className="flex flex-wrap gap-2">
+            {serviceTypes.map((category) => {
+              const isSelected = selectedCategoryIds.includes(category.id)
+              console.log(`Category ${category.label} (${category.id}): selected = ${isSelected}`)
+              return (
+                <button
+                  key={category.id}
+                  type="button"
+                  onClick={() => {
+                    console.log(`Button clicked for ${category.label} (${category.id})`)
+                    toggleCategory(category.id)
+                  }}
+                  className={`px-3 py-1.5 rounded-full text-sm font-medium transition-all ${
+                    isSelected
+                      ? 'bg-[#1a5276] text-white'
+                      : 'bg-[#1a5276]/10 text-[#1a5276] hover:bg-[#1a5276]/20'
+                  }`}
+                >
+                  {category.label}
+                </button>
+              )
+            })}
+          </div>
+        )}
+      </div>
+
+      {/* Order */}
+      <div>
+        <label className="block text-xs font-semibold text-[#1a5276]/60 uppercase tracking-wider mb-1">
+          Order
+        </label>
+        <input
+          type="number"
+          {...register('order', { valueAsNumber: true })}
+          className="w-full px-3 py-2 rounded-lg border border-[#1a5276]/20 focus:border-[#1a5276] focus:ring-2 focus:ring-[#1a5276]/20 outline-none transition-all text-[#1a5276] text-sm"
+          placeholder="Display order (0 = first)"
+        />
+        <p className="text-xs text-[#1a5276]/50 mt-1">Lower numbers appear first</p>
       </div>
 
       {/* Location */}

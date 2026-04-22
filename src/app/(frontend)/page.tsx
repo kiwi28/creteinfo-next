@@ -41,7 +41,7 @@ export default async function HomePage({ searchParams }: HomePageProps) {
   try {
     // Fetch both in parallel for better performance
     const [servicesData, categoriesData] = await Promise.all([
-      hasActiveFilters ? getServices(filter) : Promise.resolve([]),
+      hasActiveFilters ? getServices(filter, '-order') : Promise.resolve([]),
       getServiceCategories(), // Fetch from PocketBase
     ])
 
@@ -52,10 +52,13 @@ export default async function HomePage({ searchParams }: HomePageProps) {
   }
 
   // Create a mapping from slug to label for easy lookup
-  const categoryLabelsMap = categories.reduce((acc, categ) => {
-    acc[categ.slug] = categ.label
-    return acc
-  }, {} as Record<string, string>)
+  const categoryLabelsMap = categories.reduce(
+    (acc, categ) => {
+      acc[categ.slug] = categ.label
+      return acc
+    },
+    {} as Record<string, string>,
+  )
 
   return (
     <main className="min-h-screen bg-white">

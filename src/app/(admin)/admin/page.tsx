@@ -17,19 +17,6 @@ import {
   SelectValue,
 } from '@/components/ui/select'
 import { getServiceCategories } from '@/lib/services'
-// import { pb } from '@/lib/pocketbase'
-
-// export async function getServiceCategories(): Promise<ServiceType[]> {
-//   try {
-//     const records = await pb.collection('serviceTypes').getFullList({
-//       sort: 'order',
-//     })
-//     return records as unknown as ServiceType[]
-//   } catch (error) {
-//     console.error('Failed to fetch service categories:', error)
-//     return []
-//   }
-// }
 
 export default function AdminPage() {
   const { isAuthenticated, isLoading: authLoading } = useAdminAuth()
@@ -48,10 +35,10 @@ export default function AdminPage() {
   // Delete dialog state
   const [deleteTarget, setDeleteTarget] = useState<Service | null>(null)
 
-  const loadServices = useCallback(async (query?: string, category?: string) => {
+  const loadServices = useCallback(async (query?: string, category?: string, sort = '-order') => {
     setIsLoading(true)
     try {
-      const data = await fetchServices({ query, category })
+      const data = await fetchServices({ query, category, sort })
       setServices(data)
     } catch {
       // error handled by toast in caller
@@ -72,7 +59,7 @@ export default function AdminPage() {
 
   useEffect(() => {
     if (isAuthenticated) {
-      loadServices(searchQuery || undefined, selectedCategory)
+      loadServices(searchQuery || undefined, selectedCategory, '-order')
       loadServiceCategories()
     }
   }, [isAuthenticated, searchQuery, selectedCategory, loadServices])
