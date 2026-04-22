@@ -32,7 +32,6 @@ export function HeaderClient() {
 
   const serviceTypesData = useServiceCategories()
   const serviceTypes = serviceTypesData.serviceCategories
-  // console.log('serviceTypes', serviceTypes)
 
   // Read URL params on mount or when returning to homepage
   useEffect(() => {
@@ -211,12 +210,12 @@ export function HeaderClient() {
             <div className="flex flex-wrap gap-2">
               {serviceTypes.map((type) => (
                 <button
-                  key={type.value}
+                  key={type.slug}
                   onClick={() => {
-                    setSelectedCategory(selectedCategory === type.value ? null : type.value)
+                    setSelectedCategory(selectedCategory === type.slug ? null : type.slug)
                   }}
                   className={`px-3 py-1.5 rounded-full text-sm font-medium transition-all ${
-                    selectedCategory === type.value
+                    selectedCategory === type.slug
                       ? 'bg-[#1a5276] text-white'
                       : 'bg-[#1a5276]/10 text-[#1a5276] hover:bg-[#1a5276]/20'
                   }`}
@@ -313,12 +312,12 @@ export function HeaderClient() {
               <div className="flex flex-wrap gap-2">
                 {serviceTypes.map((type) => (
                   <button
-                    key={type.value}
+                    key={type.slug}
                     onClick={() =>
-                      setSelectedCategory(selectedCategory === type.value ? null : type.value)
+                      setSelectedCategory(selectedCategory === type.slug ? null : type.slug)
                     }
                     className={`px-3 py-1.5 rounded-full text-sm font-medium transition-all ${
-                      selectedCategory === type.value
+                      selectedCategory === type.slug
                         ? 'bg-[#1a5276] text-white'
                         : 'bg-[#1a5276]/10 text-[#1a5276] hover:bg-[#1a5276]/20'
                     }`}

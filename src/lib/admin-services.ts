@@ -15,16 +15,20 @@ async function triggerRevalidation(serviceId?: string) {
   }
 }
 
-export async function fetchServices(query?: string): Promise<Service[]> {
+export async function fetchServices(options?: { query?: string; category?: string }): Promise<Service[]> {
   const filterParts: string[] = []
 
-  if (query?.trim()) {
-    const keywords = query.trim().split(/\s+/)
+  if (options?.query?.trim()) {
+    const keywords = options.query.trim().split(/\s+/)
     const keywordFilters = keywords.map(
       (keyword) =>
         `(name ~ "${keyword}" || description ~ "${keyword}" || category ~ "${keyword}" || location ~ "${keyword}" || contact ~ "${keyword}" || phone ~ "${keyword}")`,
     )
     filterParts.push(`(${keywordFilters.join(' && ')})`)
+  }
+
+  if (options?.category && options.category !== 'all') {
+    filterParts.push(`category ~ "${options.category}"`)
   }
 
   const filterString = filterParts.length > 0 ? filterParts.join(' && ') : ''

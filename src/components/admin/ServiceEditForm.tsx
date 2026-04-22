@@ -4,11 +4,12 @@ import React, { useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { Loader2, Save, X } from 'lucide-react'
 import { toast } from 'sonner'
-import { categoryLabels, locationsMap } from '@/types/service'
+import { locationsMap } from '@/types/service'
 import { createService, updateService } from '@/lib/admin-services'
 import { RichTextEditor } from '@/components/admin/RichTextEditor'
 import { ImageUpload } from '@/components/admin/ImageUpload'
 import type { Service, ServiceFormData } from '@/types/service'
+import { useServiceCategories } from '@/providers/ServiceCategories'
 
 interface ServiceEditFormProps {
   service: Service | null
@@ -112,6 +113,16 @@ export function ServiceEditForm({ service, onSave, onCancel }: ServiceEditFormPr
     }
   }
 
+  const serviceTypesData = useServiceCategories()
+  const serviceTypes = serviceTypesData.serviceCategories
+  const categoryLabels = serviceTypes.reduce(
+    (acc, categ) => {
+      acc[categ.slug] = categ.label
+      return acc
+    },
+    {} as Record<string, string>,
+  )
+
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
       {/* Name */}
@@ -185,7 +196,9 @@ export function ServiceEditForm({ service, onSave, onCancel }: ServiceEditFormPr
           />
         </div>
         <div>
-          <label className="block text-xs font-semibold text-[#1a5276]/60 uppercase tracking-wider mb-1">Phone</label>
+          <label className="block text-xs font-semibold text-[#1a5276]/60 uppercase tracking-wider mb-1">
+            Phone
+          </label>
           <input
             {...register('phone')}
             className="w-full px-3 py-2 rounded-lg border border-[#1a5276]/20 focus:border-[#1a5276] focus:ring-2 focus:ring-[#1a5276]/20 outline-none transition-all text-[#1a5276] text-sm"
@@ -193,7 +206,9 @@ export function ServiceEditForm({ service, onSave, onCancel }: ServiceEditFormPr
           />
         </div>
         <div>
-          <label className="block text-xs font-semibold text-[#1a5276]/60 uppercase tracking-wider mb-1">Email</label>
+          <label className="block text-xs font-semibold text-[#1a5276]/60 uppercase tracking-wider mb-1">
+            Email
+          </label>
           <input
             {...register('email')}
             type="email"
@@ -213,7 +228,9 @@ export function ServiceEditForm({ service, onSave, onCancel }: ServiceEditFormPr
           />
         </div>
         <div>
-          <label className="block text-xs font-semibold text-[#1a5276]/60 uppercase tracking-wider mb-1">Airbnb</label>
+          <label className="block text-xs font-semibold text-[#1a5276]/60 uppercase tracking-wider mb-1">
+            Airbnb
+          </label>
           <input
             {...register('airbnb')}
             type="url"
@@ -228,7 +245,10 @@ export function ServiceEditForm({ service, onSave, onCancel }: ServiceEditFormPr
         <label className="block text-xs font-semibold text-[#1a5276]/60 uppercase tracking-wider mb-1">
           Description
         </label>
-        <RichTextEditor content={description || ''} onChange={(html) => setValue('description', html)} />
+        <RichTextEditor
+          content={description || ''}
+          onChange={(html) => setValue('description', html)}
+        />
       </div>
 
       {/* Images */}
@@ -259,7 +279,11 @@ export function ServiceEditForm({ service, onSave, onCancel }: ServiceEditFormPr
           disabled={isSubmitting}
           className="flex-1 py-2.5 bg-[#1a5276] text-white rounded-lg hover:bg-[#2980b9] transition-colors font-medium flex items-center justify-center gap-2 disabled:opacity-50"
         >
-          {isSubmitting ? <Loader2 className="w-4 h-4 animate-spin" /> : <Save className="w-4 h-4" />}
+          {isSubmitting ? (
+            <Loader2 className="w-4 h-4 animate-spin" />
+          ) : (
+            <Save className="w-4 h-4" />
+          )}
           {isSubmitting ? 'Saving...' : 'Save'}
         </button>
         <button

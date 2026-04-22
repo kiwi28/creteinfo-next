@@ -7,14 +7,37 @@ import { ServiceModal } from '@/components/admin/ServiceModal'
 import { DeleteConfirmDialog } from '@/components/admin/DeleteConfirmDialog'
 import { fetchServices } from '@/lib/admin-services'
 import { Plus, Search } from 'lucide-react'
-import type { Service } from '@/types/service'
+import type { Service, ServiceType } from '@/types/service'
+import { useServiceCategories } from '@/providers/ServiceCategories'
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select'
+import { pb } from '@/lib/pocketbase'
+
+export async function getServiceCategories(): Promise<ServiceType[]> {
+  try {
+    const records = await pb.collection('serviceTypes').getFullList({
+      sort: 'order',
+    })
+    return records as unknown as ServiceType[]
+  } catch (error) {
+    console.error('Failed to fetch service categories:', error)
+    return []
+  }
+}
 
 export default function AdminPage() {
   const { isAuthenticated, isLoading: authLoading } = useAdminAuth()
   const [services, setServices] = useState<Service[]>([])
+  const [serviceCategories, setServiceCategories] = useState<ServiceType[]>([])
   const [isLoading, setIsLoading] = useState(true)
   const [searchInput, setSearchInput] = useState('')
   const [searchQuery, setSearchQuery] = useState('')
+  const [selectedCategory, setSelectedCategory] = useState<string>('all')
 
   // Modal state
   const [selectedService, setSelectedService] = useState<Service | null>(null)
@@ -24,26 +47,44 @@ export default function AdminPage() {
   // Delete dialog state
   const [deleteTarget, setDeleteTarget] = useState<Service | null>(null)
 
-  const loadServices = useCallback(
-    async (query?: string) => {
-      setIsLoading(true)
-      try {
-        const data = await fetchServices(query)
-        setServices(data)
-      } catch {
-        // error handled by toast in caller
-      } finally {
-        setIsLoading(false)
-      }
-    },
-    [],
-  )
+  // const serviceTypes = serviceTypesData.serviceCategories
+  // const categoryLabels = serviceTypes.reduce(
+  //   (acc, categ) => {
+  //     acc[categ.slug] = categ.label
+  //     return acc
+  //   },
+  //   {} as Record<string, string>,
+  // )
+
+  const loadServices = useCallback(async (query?: string, category?: string) => {
+    setIsLoading(true)
+    try {
+      const data = await fetchServices({ query, category })
+      setServices(data)
+    } catch {
+      // error handled by toast in caller
+    } finally {
+      setIsLoading(false)
+    }
+  }, [])
+  const loadServiceCategories = useCallback(async () => {
+    setIsLoading(true)
+    try {
+      const data = await getServiceCategories()
+      setServiceCategories(data)
+    } catch {
+      // error handled by toast in caller
+    } finally {
+      setIsLoading(false)
+    }
+  }, [])
 
   useEffect(() => {
     if (isAuthenticated) {
-      loadServices()
+      loadServices(searchQuery || undefined, selectedCategory)
+      loadServiceCategories()
     }
-  }, [isAuthenticated, loadServices])
+  }, [isAuthenticated, searchQuery, selectedCategory, loadServices])
 
   if (authLoading || !isAuthenticated) return null
 
@@ -74,7 +115,7 @@ export default function AdminPage() {
     try {
       await deleteService(deleteTarget.id)
       toast.success('Service deleted successfully')
-      await loadServices(searchQuery || undefined)
+      await loadServices(searchQuery || undefined, selectedCategory)
       setIsModalOpen(false)
       setSelectedService(null)
     } catch {
@@ -84,7 +125,7 @@ export default function AdminPage() {
   }
 
   const handleSave = async () => {
-    await loadServices(searchQuery || undefined)
+    await loadServices(searchQuery || undefined, selectedCategory)
     setIsModalOpen(false)
     setSelectedService(null)
   }
@@ -101,13 +142,14 @@ export default function AdminPage() {
   const handleSearch = () => {
     const q = searchInput.trim()
     setSearchQuery(q)
-    loadServices(q || undefined)
+    loadServices(q || undefined, selectedCategory)
   }
 
   const handleSearchKeyDown = (e: React.KeyboardEvent) => {
     if (e.key === 'Enter') handleSearch()
   }
 
+  // console.log('serviceTypes', serviceTypes)
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 py-6">
       {/* Toolbar */}
@@ -117,6 +159,25 @@ export default function AdminPage() {
           <p className="text-sm text-[#1a5276]/60">
             {searchQuery ? `${services.length} results` : `${services.length} total records`}
           </p>
+        </div>
+        {/* Category Filter */}
+        <div className="w-48">
+          <Select value={selectedCategory} onValueChange={setSelectedCategory}>
+            <SelectTrigger className="w-full">
+              <SelectValue placeholder="Filter by category" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="all">All Categories</SelectItem>
+              {serviceCategories.map((category) => {
+                // console.log(category)
+                return (
+                  <SelectItem key={category.id} value={category.slug}>
+                    {category.label}
+                  </SelectItem>
+                )
+              })}
+            </SelectContent>
+          </Select>
         </div>
         <div className="flex items-center gap-3 w-full sm:w-auto">
           <div className="relative flex-1 sm:flex-initial">
@@ -148,7 +209,12 @@ export default function AdminPage() {
       </div>
 
       {/* Table */}
-      <ServicesTable services={services} isLoading={isLoading} onRowClick={handleRowClick} />
+      <ServicesTable
+        services={services}
+        isLoading={isLoading}
+        onRowClick={handleRowClick}
+        categories={serviceCategories}
+      />
 
       {/* Service Modal */}
       <ServiceModal

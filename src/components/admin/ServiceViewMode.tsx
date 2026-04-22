@@ -3,9 +3,10 @@
 import React from 'react'
 import Image from 'next/image'
 import { Pencil, Trash2, ExternalLink, Phone, Mail, MapPin } from 'lucide-react'
-import { categoryLabels, locationsMap } from '@/types/service'
+import { locationsMap } from '@/types/service'
 import { getServiceCoverUrl, getServiceDetailUrls } from '@/lib/utils'
 import type { Service } from '@/types/service'
+import { useServiceCategories } from '@/providers/ServiceCategories'
 
 interface ServiceViewModeProps {
   service: Service
@@ -16,6 +17,16 @@ interface ServiceViewModeProps {
 export function ServiceViewMode({ service, onEdit, onDelete }: ServiceViewModeProps) {
   const coverUrl = getServiceCoverUrl(service)
   const detailUrls = getServiceDetailUrls(service)
+
+  const serviceTypesData = useServiceCategories()
+  const serviceTypes = serviceTypesData.serviceCategories
+  const categoryLabels = serviceTypes.reduce(
+    (acc, categ) => {
+      acc[categ.slug] = categ.label
+      return acc
+    },
+    {} as Record<string, string>,
+  )
 
   return (
     <div className="space-y-6">
@@ -34,7 +45,10 @@ export function ServiceViewMode({ service, onEdit, onDelete }: ServiceViewModePr
           </h3>
           <div className="grid grid-cols-4 gap-2">
             {detailUrls.map((url, i) => (
-              <div key={i} className="relative aspect-square rounded-lg overflow-hidden bg-gray-100">
+              <div
+                key={i}
+                className="relative aspect-square rounded-lg overflow-hidden bg-gray-100"
+              >
                 <Image
                   src={url}
                   alt={`${service.name} image ${i + 1}`}
@@ -51,33 +65,45 @@ export function ServiceViewMode({ service, onEdit, onDelete }: ServiceViewModePr
       {/* Basic Info */}
       <div className="grid grid-cols-2 gap-4">
         <div>
-          <label className="text-xs font-semibold text-[#1a5276]/60 uppercase tracking-wider">Name</label>
+          <label className="text-xs font-semibold text-[#1a5276]/60 uppercase tracking-wider">
+            Name
+          </label>
           <p className="text-[#1a5276] font-medium mt-0.5">{service.name}</p>
         </div>
         <div>
-          <label className="text-xs font-semibold text-[#1a5276]/60 uppercase tracking-wider">Category</label>
+          <label className="text-xs font-semibold text-[#1a5276]/60 uppercase tracking-wider">
+            Category
+          </label>
           <div className="flex flex-wrap gap-1 mt-0.5">
             {service.category?.map((c) => (
-              <span key={c} className="px-2 py-0.5 rounded-full text-xs font-medium bg-[#1a5276]/10 text-[#1a5276]">
+              <span
+                key={c}
+                className="px-2 py-0.5 rounded-full text-xs font-medium bg-[#1a5276]/10 text-[#1a5276]"
+              >
                 {categoryLabels[c] || c}
               </span>
             ))}
           </div>
         </div>
         <div>
-          <label className="text-xs font-semibold text-[#1a5276]/60 uppercase tracking-wider">Location</label>
+          <label className="text-xs font-semibold text-[#1a5276]/60 uppercase tracking-wider">
+            Location
+          </label>
           <div className="flex flex-wrap gap-1 mt-0.5">
-            {(Array.isArray(service.location) ? service.location : service.location ? [service.location] : []).map(
-              (l) => (
-                <span
-                  key={l}
-                  className="px-2 py-0.5 rounded-full text-xs font-medium bg-[#d4a84b]/10 text-[#d4a84b] flex items-center gap-1"
-                >
-                  <MapPin className="w-3 h-3" />
-                  {locationsMap[l as keyof typeof locationsMap] || l}
-                </span>
-              ),
-            )}
+            {(Array.isArray(service.location)
+              ? service.location
+              : service.location
+                ? [service.location]
+                : []
+            ).map((l) => (
+              <span
+                key={l}
+                className="px-2 py-0.5 rounded-full text-xs font-medium bg-[#d4a84b]/10 text-[#d4a84b] flex items-center gap-1"
+              >
+                <MapPin className="w-3 h-3" />
+                {locationsMap[l as keyof typeof locationsMap] || l}
+              </span>
+            ))}
             {!service.location && <span className="text-sm text-[#1a5276]/50">—</span>}
           </div>
         </div>
@@ -85,7 +111,9 @@ export function ServiceViewMode({ service, onEdit, onDelete }: ServiceViewModePr
 
       {/* Contact Info */}
       <div>
-        <h3 className="text-sm font-semibold text-[#1a5276]/60 uppercase tracking-wider mb-2">Contact</h3>
+        <h3 className="text-sm font-semibold text-[#1a5276]/60 uppercase tracking-wider mb-2">
+          Contact
+        </h3>
         <div className="grid grid-cols-2 gap-3">
           {service.contact && (
             <div className="text-sm text-[#1a5276]">
@@ -111,7 +139,12 @@ export function ServiceViewMode({ service, onEdit, onDelete }: ServiceViewModePr
           {service.website && (
             <div className="text-sm text-[#1a5276] flex items-center gap-1">
               <ExternalLink className="w-3 h-3" />
-              <a href={service.website} target="_blank" rel="noopener noreferrer" className="hover:underline truncate">
+              <a
+                href={service.website}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="hover:underline truncate"
+              >
                 Website
               </a>
             </div>
@@ -119,7 +152,12 @@ export function ServiceViewMode({ service, onEdit, onDelete }: ServiceViewModePr
           {service.airbnb && (
             <div className="text-sm text-[#1a5276] flex items-center gap-1">
               <ExternalLink className="w-3 h-3" />
-              <a href={service.airbnb} target="_blank" rel="noopener noreferrer" className="hover:underline truncate">
+              <a
+                href={service.airbnb}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="hover:underline truncate"
+              >
                 Airbnb
               </a>
             </div>
@@ -130,7 +168,9 @@ export function ServiceViewMode({ service, onEdit, onDelete }: ServiceViewModePr
       {/* Description - content from admin's own PocketBase editor (trusted) */}
       {service.description && (
         <div>
-          <h3 className="text-sm font-semibold text-[#1a5276]/60 uppercase tracking-wider mb-2">Description</h3>
+          <h3 className="text-sm font-semibold text-[#1a5276]/60 uppercase tracking-wider mb-2">
+            Description
+          </h3>
           {/* eslint-disable-next-line react/no-danger */}
           <div
             className="text-sm text-[#1a5276]/80 prose prose-sm max-w-none"

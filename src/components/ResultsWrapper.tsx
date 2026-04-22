@@ -4,8 +4,9 @@ import type { Service } from '@/types/service'
 import Link from 'next/link'
 import Image from 'next/image'
 import { MapPin, Star } from 'lucide-react'
-import { categoryLabels, locationsMap } from '@/types/service'
+import { locationsMap } from '@/types/service'
 import { getServiceCoverUrl } from '@/lib/utils'
+import { useServiceCategories } from '@/providers/ServiceCategories'
 
 interface ResultsWrapperProps {
   services: Service[]
@@ -36,7 +37,17 @@ export function ResultsWrapper({ services }: ResultsWrapperProps) {
 function ServiceCard({ service }: { service: Service }) {
   const imageUrl = getServiceCoverUrl(service) || '/images/placeholder-service.png'
   const categoryKey = service.category?.[0] || ''
-  const categoryLabel = categoryLabels[categoryKey] || categoryKey
+
+  const serviceTypesData = useServiceCategories()
+  const serviceTypes = serviceTypesData.serviceCategories
+  const categoryLabelsMap = serviceTypes.reduce(
+    (acc, categ) => {
+      acc[categ.slug] = categ.label
+      return acc
+    },
+    {} as Record<string, string>,
+  )
+  const categoryLabel = categoryLabelsMap[categoryKey] || categoryKey
 
   return (
     <Link
@@ -68,8 +79,14 @@ function ServiceCard({ service }: { service: Service }) {
         <div className="flex items-center gap-2 text-xs text-[#1a5276]/60">
           <span className="font-medium">{categoryLabel}</span>
           {(() => {
-            const locs = Array.isArray(service.location) ? service.location : service.location ? [service.location] : []
-            const labels = locs.map((l) => locationsMap[l as keyof typeof locationsMap] || l).filter(Boolean)
+            const locs = Array.isArray(service.location)
+              ? service.location
+              : service.location
+                ? [service.location]
+                : []
+            const labels = locs
+              .map((l) => locationsMap[l as keyof typeof locationsMap] || l)
+              .filter(Boolean)
             return labels.length > 0 ? (
               <>
                 <span>•</span>

@@ -4,10 +4,9 @@ import Link from 'next/link'
 import Image from 'next/image'
 import React from 'react'
 import { ArrowLeft, MapPin, Phone, Mail, Globe, MessageCircle } from 'lucide-react'
-import { getServiceById, getServices } from '@/lib/services'
+import { getServiceById, getServiceCategories, getServices } from '@/lib/services'
 import { getServiceCoverUrl, getServiceDetailUrls } from '@/lib/utils'
-import type { Service } from '@/types/service'
-import { categoryLabels, locationsMap } from '@/types/service'
+import { locationsMap, ServiceType } from '@/types/service'
 
 // Revalidate service detail pages every 5 minutes as a safety net
 export const revalidate = 300
@@ -62,7 +61,30 @@ export default async function ServicePage({ params }: ServicePageProps) {
     return null
   }
 
-  const categoryLabel = categoryLabels[service.category?.[0]] || service.category?.[0] || 'Service'
+  let categories: ServiceType[] = []
+
+  try {
+    const [categoriesData] = await Promise.all([
+      getServiceCategories(), // Fetch from PocketBase
+    ])
+
+    categories = categoriesData
+  } catch (error) {
+    console.error('Failed to fetch data:', error)
+  }
+
+  // Create a mapping from slug to label for easy lookup
+  const categoryLabelsMap = categories.reduce(
+    (acc, categ) => {
+      acc[categ.slug] = categ.label
+      return acc
+    },
+    {} as Record<string, string>,
+  )
+
+  const categoryLabel =
+    categoryLabelsMap[service.category?.[0]] || service.category?.[0] || 'Service'
+  console.log('service page - category label', categoryLabel)
   const coverImageUrl = getServiceCoverUrl(service)
   const detailImageUrls = getServiceDetailUrls(service)
 

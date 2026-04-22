@@ -3,17 +3,18 @@
 import React from 'react'
 import Image from 'next/image'
 import { Loader2 } from 'lucide-react'
-import { categoryLabels, locationsMap } from '@/types/service'
+import { locationsMap } from '@/types/service'
 import { getServiceCoverUrl } from '@/lib/utils'
-import type { Service } from '@/types/service'
+import type { Service, ServiceType } from '@/types/service'
 
 interface ServicesTableProps {
   services: Service[]
   isLoading: boolean
+  categories: ServiceType[]
   onRowClick: (service: Service) => void
 }
 
-export function ServicesTable({ services, isLoading, onRowClick }: ServicesTableProps) {
+export function ServicesTable({ services, categories, isLoading, onRowClick }: ServicesTableProps) {
   if (isLoading) {
     return (
       <div className="bg-white rounded-xl shadow-sm border p-12 flex items-center justify-center">
@@ -29,6 +30,14 @@ export function ServicesTable({ services, isLoading, onRowClick }: ServicesTable
       </div>
     )
   }
+
+  const categoryLabels = categories.reduce(
+    (acc, categ) => {
+      acc[categ.slug] = categ.label
+      return acc
+    },
+    {} as Record<string, string>,
+  )
 
   return (
     <div className="bg-white rounded-xl shadow-sm border overflow-hidden">
@@ -56,9 +65,7 @@ export function ServicesTable({ services, isLoading, onRowClick }: ServicesTable
           <tbody>
             {services.map((service) => {
               const imageUrl = getServiceCoverUrl(service)
-              const categories = service.category
-                ?.map((c) => categoryLabels[c] || c)
-                .join(', ')
+              const categories = service.category?.map((c) => categoryLabels[c] || c).join(', ')
               const rawLocations = Array.isArray(service.location)
                 ? service.location
                 : service.location

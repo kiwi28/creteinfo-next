@@ -51,7 +51,11 @@ export default async function HomePage({ searchParams }: HomePageProps) {
     console.error('Failed to fetch data:', error)
   }
 
-  const categoryLabels = categories.map((categ) => categ.label)
+  // Create a mapping from slug to label for easy lookup
+  const categoryLabelsMap = categories.reduce((acc, categ) => {
+    acc[categ.slug] = categ.label
+    return acc
+  }, {} as Record<string, string>)
 
   return (
     <main className="min-h-screen bg-white">
@@ -105,7 +109,7 @@ export default async function HomePage({ searchParams }: HomePageProps) {
                   <p className="text-[#1a5276]/60 mt-1">
                     {params.q && `Search: "${params.q}"`}
                     {params.category &&
-                      `${params.q ? ' • ' : ''}${categoryLabels[params.category] || params.category}`}
+                      `${params.q ? ' • ' : ''}${categoryLabelsMap[params.category] || params.category}`}
                     {params.location &&
                       `${params.q || params.category ? ' • ' : ''}${params.location.charAt(0).toUpperCase() + params.location.slice(1).replace(/-/g, ' ')}`}
                   </p>
