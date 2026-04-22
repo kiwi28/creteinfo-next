@@ -5,6 +5,7 @@ import { ArrowRight } from 'lucide-react'
 import { getServiceCategories, getServices } from '@/lib/services'
 // import { getServiceCoverUrl } from '@/lib/utils'
 import type { Service, ServiceType } from '@/types/service'
+import { locationsMap } from '@/types/service'
 import { ResultsSection } from '@/components/ResultsSection'
 import CopyLinkButton from '@/components/CopyLinkBtn'
 import { getFileUrl } from '@/lib/utils'
@@ -99,6 +100,19 @@ export default async function HomePage({ searchParams }: HomePageProps) {
                 Discover Crete
                 <ArrowRight className="w-4 h-4" />
               </Link>
+
+              {/* Location Filters */}
+              <div className="mt-8 flex flex-wrap items-center justify-center gap-2 md:gap-3">
+                {Object.entries(locationsMap).map(([value, label]) => (
+                  <Link
+                    key={value}
+                    href={`/?location=${value}`}
+                    className="px-4 py-2 rounded-full text-sm font-medium bg-white/20 text-white hover:bg-[#d4a84b] hover:text-white backdrop-blur-sm transition-all border border-white/30"
+                  >
+                    {label}
+                  </Link>
+                ))}
+              </div>
             </div>
           </section>
         )}
@@ -107,6 +121,32 @@ export default async function HomePage({ searchParams }: HomePageProps) {
         {hasActiveFilters && (
           <section className="pt-24 md:pt-0 pb-12 px-4 md:px-8">
             <div className="max-w-7xl mx-auto">
+              {/* Location Filters - Show at top of results too */}
+              <div className="mb-6">
+                <div className="flex flex-wrap items-center gap-2 md:gap-3">
+                  {Object.entries(locationsMap).map(([value, label]) => {
+                    const isActive = params.location === value
+                    return (
+                      <Link
+                        key={value}
+                        href={
+                          isActive
+                            ? `/?${params.q ? `q=${params.q}` : ''}${params.category ? `&category=${params.category}` : ''}`
+                            : `/?location=${value}${params.q ? `&q=${params.q}` : ''}${params.category ? `&category=${params.category}` : ''}`
+                        }
+                        className={`px-4 py-2 rounded-full text-sm font-medium transition-all ${
+                          isActive
+                            ? 'bg-[#d4a84b] text-white'
+                            : 'bg-[#1a5276]/10 text-[#1a5276] hover:bg-[#1a5276]/20'
+                        }`}
+                      >
+                        {label}
+                      </Link>
+                    )
+                  })}
+                </div>
+              </div>
+
               {/* Results Header */}
               <div className="mb-6">
                 <h2 className="flex font-display text-2xl md:text-3xl font-bold text-[#1a5276]">

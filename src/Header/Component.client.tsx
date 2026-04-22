@@ -211,7 +211,7 @@ export function HeaderClient() {
       {!isServicesPage && (
         <div className="px-4 md:px-0 hidden md:block max-w-7xl mx-auto py-4 pt-28 border-t border-[#1a5276]/10">
           {/* Service Type Buttons */}
-          <div className="mb-3">
+          <div>
             <p className="text-xs font-semibold text-[#1a5276]/60 uppercase tracking-wider mb-2">
               Service Type
             </p>
@@ -231,34 +231,6 @@ export function HeaderClient() {
                   {type.label}
                 </button>
               ))}
-            </div>
-          </div>
-
-          {/* Location Buttons */}
-          <div>
-            <p className="text-xs font-semibold text-[#1a5276]/60 uppercase tracking-wider mb-2">
-              <MapPin className="w-3 h-3 inline mr-1" />
-              Location
-            </p>
-            <div className="flex flex-wrap gap-2">
-              {Object.entries(locationsMap).map((entry) => {
-                const [value, label] = entry
-                return (
-                  <button
-                    key={value}
-                    onClick={() => {
-                      setSelectedLocation(selectedLocation === value ? null : value)
-                    }}
-                    className={`px-3 py-1.5 rounded-full text-sm font-medium transition-all ${
-                      selectedLocation === value
-                        ? 'bg-[#d4a84b] text-white'
-                        : 'bg-[#d4a84b]/10 text-[#d4a84b] hover:bg-[#d4a84b]/20'
-                    }`}
-                  >
-                    {label}
-                  </button>
-                )
-              })}
             </div>
           </div>
 
