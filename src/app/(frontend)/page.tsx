@@ -42,7 +42,7 @@ export default async function HomePage({ searchParams }: HomePageProps) {
   try {
     // Fetch both in parallel for better performance
     const [servicesData, categoriesData] = await Promise.all([
-      hasActiveFilters ? getServices(filter) : Promise.resolve([]),
+      hasActiveFilters ? getServices(filter, '-order,-created') : Promise.resolve([]),
       getServiceCategories(), // Fetch from PocketBase
     ])
 
@@ -51,15 +51,6 @@ export default async function HomePage({ searchParams }: HomePageProps) {
   } catch (error) {
     console.error('Failed to fetch data:', error)
   }
-
-  // Create a mapping from slug to label for easy lookup
-  const categoryLabelsMap = categories.reduce(
-    (acc, categ) => {
-      acc[categ.slug] = categ.label
-      return acc
-    },
-    {} as Record<string, string>,
-  )
 
   // Create a mapping from ID to label for category filter display
   const categoryLabelsByIdMap = categories.reduce(
@@ -199,18 +190,56 @@ export default async function HomePage({ searchParams }: HomePageProps) {
             Discover Crete
           </h1>
           {/* <div className="text-[#1a5276]/70 max-w-fit mx-auto space-y-2 text-center"> */}
-          <div className="text-[#1a5276]/70 max-w-fit mx-auto space-y-2 text-left md:relative md:left-20">
-            <p>Crete is not just a vacation... it&apos;s a state of mind</p>
+          {/* <div className="text-[#1a5276]/70 max-w-fit mx-auto space-y-2 text-left md:relative md:left-20"> */}
+          <div className="text-[#1a5276]/70 max-w-140 mx-auto space-y-2 text-left md:relative md:left-20">
+            <p>Crete is not just a vacation… it's a state of mind</p>
             <br />
-            <p>It&apos;s that morning when you drink your coffee looking at the sea.</p>
-            <p>It&apos;s the smell of warm bread in a small village, where no one is in a hurry.</p>
-            <p>
-              It&apos;s the sound of the waves and the silence that makes you forget everything.
-            </p>
+            <p>It's that morning when you drink your coffee looking at the sea.</p>
+            <p>It's the smell of warm bread in a small village, where no one is in a hurry.</p>
+            <p>It's the sound of the waves and the silence that makes you forget everything.</p>
             <br />
             <p>Crete cannot be explained. It can be felt.</p>
             <br />
-            <p>It all started simply... from the desire to help.</p>
+            <p>It all started simply… from the desire to help.</p>
+            <p>A few Facebook groups, a few questions, a few answers.</p>
+            <p>People who didn't know each other, but who had the same dream:</p>
+            <p>a beautiful, carefree vacation.</p>
+            <br />
+            <p>Slowly, we became a community.</p>
+            <p>One where recommendations are real, experiences are lived,</p>
+            <p>and every piece of advice comes from the heart.</p>
+            <br />
+            <p>This site was born from the same idea.</p>
+            <br />
+            <p>
+              We have gathered here places, people and experiences that can turn a vacation into a
+              lifetime memory:
+            </p>
+            <ul className="list-disc ml-6">
+              <li>welcoming accommodations</li>
+              <li>places where you eat like a local</li>
+              <li>roads that lead to unforgettable landscapes</li>
+              <li>experiences that you will tell about for years to come</li>
+            </ul>
+            <br />
+            <p>
+              We collaborate with carefully selected and trusted people from Crete— people who put
+              their soul into what they do.
+            </p>
+            <p>
+              We support and recommend them because we know that they can offer more than a service:
+              <b>they can offer an experience.</b>
+            </p>
+            <br />
+            <p>And our groups stay at home.</p>
+            <p>The place where you ask, where you find out, where you always return.</p>
+            <br />
+            <p>We just went the extra mile…</p>
+            <p>so that you can find everything you need more easily.</p>
+            <br />
+            <p>The rest… you will feel when you get here.</p>
+            <br />
+            <p>Crete is waiting for you. To enjoy it. To feel it. To tell about it!</p>
           </div>
         </div>
       </section>
